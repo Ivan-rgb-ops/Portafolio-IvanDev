@@ -78,6 +78,112 @@ body {
   -webkit-user-select: none !important;
 }
 
+/* ==================== OS WINDOW RESIZE SYSTEM ==================== */
+.os-window-resize-handle {
+  position: absolute;
+  z-index: 40;
+  touch-action: none;
+  background: transparent;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* Edge handles */
+.os-window-resize-handle.top {
+  top: 0;
+  left: 14px;
+  right: 14px;
+  height: 8px;
+  cursor: ns-resize;
+}
+
+.os-window-resize-handle.bottom {
+  bottom: 0;
+  left: 14px;
+  right: 14px;
+  height: 8px;
+  cursor: ns-resize;
+}
+
+.os-window-resize-handle.left {
+  left: 0;
+  top: 14px;
+  bottom: 14px;
+  width: 8px;
+  cursor: ew-resize;
+}
+
+.os-window-resize-handle.right {
+  right: 0;
+  top: 14px;
+  bottom: 14px;
+  width: 8px;
+  cursor: ew-resize;
+}
+
+/* Corner handles (generous hit area for easy grabbing) */
+.os-window-resize-handle.top-left {
+  top: 0;
+  left: 0;
+  width: 16px;
+  height: 16px;
+  cursor: nwse-resize;
+  z-index: 45;
+}
+
+.os-window-resize-handle.top-right {
+  top: 0;
+  right: 0;
+  width: 16px;
+  height: 16px;
+  cursor: nesw-resize;
+  z-index: 45;
+}
+
+.os-window-resize-handle.bottom-left {
+  bottom: 0;
+  left: 0;
+  width: 16px;
+  height: 16px;
+  cursor: nesw-resize;
+  z-index: 45;
+}
+
+.os-window-resize-handle.bottom-right {
+  bottom: 0;
+  right: 0;
+  width: 16px;
+  height: 16px;
+  cursor: nwse-resize;
+  z-index: 45;
+}
+
+/* Deactivate resize handles when window is maximized */
+.os-window.maximized .os-window-resize-handle {
+  display: none !important;
+}
+
+/* Visual and pointer state during active resizing */
+body.is-window-resizing {
+  user-select: none !important;
+  -webkit-user-select: none !important;
+}
+
+body.is-window-resizing iframe,
+.os-window.is-resizing iframe {
+  pointer-events: none !important;
+}
+
+.os-window.is-resizing {
+  user-select: none !important;
+  -webkit-user-select: none !important;
+  transition: none !important;
+}
+
+.os-window.is-resizing .os-window-content {
+  pointer-events: none !important;
+}
+
 /* ==================== DESKTOP ICONS ANIMATION & DRAGGING ==================== */
 .desktop-grid-container,
 .desktop-grid-cell {

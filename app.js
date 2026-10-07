@@ -281,14 +281,14 @@ const SoundSystem = {
 
 // Window Configurations
 const windowConfigs = {
-  about: { title: 'Sobre Mí', titleEn: 'About Me', defaultW: 780, defaultH: 540 },
-  projects: { title: 'Proyectos', titleEn: 'Projects', defaultW: 860, defaultH: 580 },
-  resume: { title: 'Currículum', titleEn: 'Resume', defaultW: 760, defaultH: 600 },
-  contact: { title: 'Contacto', titleEn: 'Contact', defaultW: 680, defaultH: 500 },
-  terminal: { title: 'Terminal', titleEn: 'Terminal', defaultW: 640, defaultH: 420 },
-  chat: { title: 'Iván AI', titleEn: 'Iván AI', defaultW: 560, defaultH: 520 },
-  settings: { title: 'Configuración', titleEn: 'Settings', defaultW: 600, defaultH: 480 },
-  doom: { title: 'DOOM (1993)', titleEn: 'DOOM (1993)', defaultW: 760, defaultH: 540 }
+  about: { title: 'Sobre Mí', titleEn: 'About Me', defaultW: 780, defaultH: 540, minW: 340, minH: 260 },
+  projects: { title: 'Proyectos', titleEn: 'Projects', defaultW: 860, defaultH: 580, minW: 360, minH: 280 },
+  resume: { title: 'Currículum', titleEn: 'Resume', defaultW: 760, defaultH: 600, minW: 340, minH: 280 },
+  contact: { title: 'Contacto', titleEn: 'Contact', defaultW: 680, defaultH: 500, minW: 320, minH: 260 },
+  terminal: { title: 'Terminal', titleEn: 'Terminal', defaultW: 640, defaultH: 420, minW: 340, minH: 220 },
+  chat: { title: 'Iván AI', titleEn: 'Iván AI', defaultW: 560, defaultH: 520, minW: 320, minH: 260 },
+  settings: { title: 'Configuración', titleEn: 'Settings', defaultW: 600, defaultH: 480, minW: 340, minH: 260 },
+  doom: { title: 'DOOM (1993)', titleEn: 'DOOM (1993)', defaultW: 760, defaultH: 540, minW: 360, minH: 260 }
 };
 
 // Initialize on DOM ready
@@ -305,6 +305,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initBootSequence();
   initContextMenu();
   initSpotlight();
+  initWindowResizing();
   applyLanguage(currentLang);
 
   // Close menus on outside click
@@ -568,6 +569,7 @@ function lockScreen() {
 function openWindow(name) {
   const win = document.getElementById(`win-${name}`);
   if (!win) return;
+  attachWindowResizeHandles(win);
 
   const cfg = windowConfigs[name] || { defaultW: 740, defaultH: 520 };
   const isClosed = win.style.display === 'none' || !win.style.display;
@@ -870,8 +872,8 @@ function updateDockState(name, isOpen) {
 
 /* ==================== UNIVERSAL POINTER-EVENT WINDOW DRAGGING ==================== */
 function handleWindowDragStart(e, winId) {
-  // Ignore clicks on buttons, inputs, links, or traffic lights
-  if (e.target.closest('.traffic-lights, button, a, input, select, textarea')) return;
+  // Ignore clicks on buttons, inputs, links, traffic lights, or resize handles
+  if (e.target.closest('.traffic-lights, .os-window-resize-handle, button, a, input, select, textarea')) return;
 
   const win = document.getElementById(winId);
   if (!win || win.classList.contains('maximized')) return;
@@ -907,6 +909,164 @@ function handleWindowDragStart(e, winId) {
   function onPointerUp(ev) {
     if (ev.pointerId !== pointerId) return;
     win.classList.remove('is-dragging');
+    window.removeEventListener('pointermove', onPointerMove);
+    window.removeEventListener('pointerup', onPointerUp);
+    window.removeEventListener('pointercancel', onPointerUp);
+  }
+
+  window.addEventListener('pointermove', onPointerMove, { passive: true });
+  window.addEventListener('pointerup', onPointerUp);
+  window.addEventListener('pointercancel', onPointerUp);
+}
+
+/* ==================== UNIVERSAL WINDOW RESIZING SYSTEM ==================== */
+function attachWindowResizeHandles(win) {
+  if (!win || win._hasResizeHandles) return;
+  win._hasResizeHandles = true;
+
+  const directions = [
+    'top', 'right', 'bottom', 'left',
+    'top-left', 'top-right', 'bottom-left', 'bottom-right'
+  ];
+
+  directions.forEach(dir => {
+    const handle = document.createElement('div');
+    handle.className = `os-window-resize-handle ${dir}`;
+    handle.setAttribute('data-resize-dir', dir);
+    handle.addEventListener('pointerdown', (e) => handleWindowResizeStart(e, win, dir));
+    win.appendChild(handle);
+  });
+}
+
+function initWindowResizing() {
+  document.querySelectorAll('.os-window').forEach(win => {
+    attachWindowResizeHandles(win);
+  });
+}
+
+function handleWindowResizeStart(e, win, dir) {
+  // Only handle primary pointer (usually left button or touch)
+  if (e.button !== 0 && e.pointerType === 'mouse') return;
+  if (!win || win.classList.contains('maximized')) return;
+
+  e.preventDefault();
+  e.stopPropagation();
+
+  // Bring window to front and focus
+  const name = win.id.replace('win-', '');
+  focusWindow(name);
+
+  if (window.gsap) gsap.killTweensOf(win);
+
+  const rect = win.getBoundingClientRect();
+  const startX = e.clientX;
+  const startY = e.clientY;
+  const startLeft = rect.left;
+  const startTop = rect.top;
+  const startWidth = rect.width;
+  const startHeight = rect.height;
+  const pointerId = e.pointerId;
+
+  // Window min/max bounds
+  const cfg = windowConfigs[name] || {};
+  const minW = cfg.minW || 340;
+  const minH = cfg.minH || 220;
+  const maxW = Math.max(minW, window.innerWidth - 16);
+  const maxH = Math.max(minH, window.innerHeight - 60);
+
+  const handle = e.currentTarget;
+  try {
+    handle.setPointerCapture(pointerId);
+  } catch (err) {}
+
+  win.classList.add('is-resizing');
+  document.body.classList.add('is-window-resizing');
+
+  // Set global cursor matching the active resize direction
+  const activeCursor = window.getComputedStyle(handle).cursor || 'nwse-resize';
+  document.body.style.cursor = activeCursor;
+
+  function onPointerMove(ev) {
+    if (ev.pointerId !== pointerId) return;
+
+    const dx = ev.clientX - startX;
+    const dy = ev.clientY - startY;
+
+    let newWidth = startWidth;
+    let newHeight = startHeight;
+    let newLeft = startLeft;
+    let newTop = startTop;
+
+    // --- HORIZONTAL RESIZING ---
+    if (dir.includes('right')) {
+      newWidth = Math.max(minW, Math.min(maxW, startWidth + dx));
+      if (startLeft + newWidth > window.innerWidth - 8) {
+        newWidth = Math.max(minW, window.innerWidth - 8 - startLeft);
+      }
+    } else if (dir.includes('left')) {
+      let candidateWidth = startWidth - dx;
+      if (candidateWidth < minW) {
+        candidateWidth = minW;
+      } else if (candidateWidth > maxW) {
+        candidateWidth = maxW;
+      }
+      const appliedDx = startWidth - candidateWidth;
+      newLeft = startLeft + appliedDx;
+      if (newLeft < 8) {
+        newLeft = 8;
+        candidateWidth = Math.max(minW, startLeft + startWidth - 8);
+      }
+      newWidth = candidateWidth;
+    }
+
+    // --- VERTICAL RESIZING ---
+    if (dir.includes('bottom')) {
+      newHeight = Math.max(minH, Math.min(maxH, startHeight + dy));
+      if (startTop + newHeight > window.innerHeight - 60) {
+        newHeight = Math.max(minH, window.innerHeight - 60 - startTop);
+      }
+    } else if (dir.includes('top')) {
+      let candidateHeight = startHeight - dy;
+      if (candidateHeight < minH) {
+        candidateHeight = minH;
+      } else if (candidateHeight > maxH) {
+        candidateHeight = maxH;
+      }
+      const appliedDy = startHeight - candidateHeight;
+      newTop = startTop + appliedDy;
+      if (newTop < 0) {
+        newTop = 0;
+        candidateHeight = Math.max(minH, startTop + startHeight);
+      }
+      newHeight = candidateHeight;
+    }
+
+    // Apply dimensions to window
+    win.style.width = `${Math.round(newWidth)}px`;
+    win.style.height = `${Math.round(newHeight)}px`;
+    win.style.left = `${Math.round(newLeft)}px`;
+    win.style.top = `${Math.round(newTop)}px`;
+
+    // Keep restore bounds in sync for maximize/restore
+    win._prevBounds = {
+      left: win.style.left,
+      top: win.style.top,
+      width: win.style.width,
+      height: win.style.height
+    };
+  }
+
+  function onPointerUp(ev) {
+    if (ev.pointerId !== pointerId) return;
+
+    try {
+      handle.releasePointerCapture(pointerId);
+    } catch (err) {}
+
+    win.classList.remove('is-resizing');
+    document.body.classList.remove('is-window-resizing');
+    document.body.style.cursor = '';
+
     window.removeEventListener('pointermove', onPointerMove);
     window.removeEventListener('pointerup', onPointerUp);
     window.removeEventListener('pointercancel', onPointerUp);
