@@ -1086,28 +1086,17 @@ try {
   iconPositions = {};
 }
 
+let activeDraggedIcon = null;
+
 function checkIconCollision(draggedIcon, targetX, targetY) {
   const draggedParent = draggedIcon.closest('.desktop-grid-cell');
   if (!draggedParent) return false;
 
   const parentRect = draggedParent.getBoundingClientRect();
-  const iconBaseCenterX = parentRect.left + parentRect.width / 2;
-  const iconBaseCenterY = parentRect.top + parentRect.height / 2;
+  const myCandidateCenterX = parentRect.left + parentRect.width / 2 + targetX;
+  const myCandidateCenterY = parentRect.top + parentRect.height / 2 + targetY;
 
-  const candidateCenterX = iconBaseCenterX + targetX;
-  const candidateCenterY = iconBaseCenterY + targetY;
-
-  // Boundary check
-  const iconHalfWidth = 40;
-  const iconHalfHeight = 42;
-  if (candidateCenterX - iconHalfWidth < 8 || candidateCenterX + iconHalfWidth > window.innerWidth - 8) {
-    return true;
-  }
-  if (candidateCenterY - iconHalfHeight < 8 || candidateCenterY + iconHalfHeight > window.innerHeight - 76) {
-    return true;
-  }
-
-  // Overlap check with other icons
+  // Overlap check with other icons (icons are 76x86px, row gap is 16px, col gap is 20px)
   const allIcons = document.querySelectorAll('.desktop-icon');
   for (const other of allIcons) {
     if (other === draggedIcon) continue;
@@ -1120,8 +1109,11 @@ function checkIconCollision(draggedIcon, targetX, targetY) {
     const otherCenterX = otherParentRect.left + otherParentRect.width / 2 + otherPosX;
     const otherCenterY = otherParentRect.top + otherParentRect.height / 2 + otherPosY;
 
-    const dist = Math.hypot(candidateCenterX - otherCenterX, candidateCenterY - otherCenterY);
-    if (dist < 64) {
+    const diffX = Math.abs(myCandidateCenterX - otherCenterX);
+    const diffY = Math.abs(myCandidateCenterY - otherCenterY);
+
+    // Collide if both horizontal and vertical overlap occur
+    if (diffX < 70 && diffY < 80) {
       return true;
     }
   }
@@ -1133,12 +1125,12 @@ function initDesktopIcons() {
   document.querySelectorAll('.desktop-icon').forEach(icon => {
     const origin = icon.getAttribute('data-window-origin');
     let isDragging = false;
-    let startX = 0, startY = 0;
     let currentX = 0, currentY = 0;
     let prevValidX = 0, prevValidY = 0;
     let hasMoved = false;
     let tiltAngle = 0;
     let lastClientX = 0;
+    let activePointerId = null;
 
     if (origin && iconPositions[origin]) {
       currentX = iconPositions[origin].x || 0;
@@ -1149,11 +1141,17 @@ function initDesktopIcons() {
       icon.dataset.posY = currentY;
       if (currentX !== 0 || currentY !== 0) {
         icon.style.transform = `translate3d(${currentX}px, ${currentY}px, 0)`;
+      } else {
+        icon.style.transform = '';
       }
     } else {
       icon.dataset.posX = '0';
       icon.dataset.posY = '0';
+      icon.style.transform = '';
     }
+
+    // Prevent native drag preview of images or elements
+    icon.addEventListener('dragstart', (e) => e.preventDefault());
 
     icon.addEventListener('keydown', (e) => {
       if (e.key === 'Enter' || e.key === ' ') {
@@ -1163,7 +1161,14 @@ function initDesktopIcons() {
     });
 
     icon.addEventListener('pointerdown', (e) => {
-      if (e.button !== 0) return;
+      if (e.button !== 0 && e.pointerType === 'mouse') return;
+      if (activeDraggedIcon && activeDraggedIcon !== icon) return;
+      if (!icon.contains(e.target)) return;
+
+      if (window.gsap) gsap.killTweensOf(icon);
+
+      icon.style.transition = 'none';
+
       currentX = parseFloat(icon.dataset.posX) || 0;
       currentY = parseFloat(icon.dataset.posY) || 0;
       prevValidX = currentX;
@@ -1171,49 +1176,88 @@ function initDesktopIcons() {
 
       isDragging = true;
       hasMoved = false;
+      activeDraggedIcon = icon;
+      activePointerId = e.pointerId;
+
+      const iconRect = icon.getBoundingClientRect();
+      const parentCell = icon.closest('.desktop-grid-cell');
+      const parentRect = parentCell ? parentCell.getBoundingClientRect() : iconRect;
+
+      // Base top-left without translation
+      const baseLeft = parentRect.left + (parentRect.width - iconRect.width) / 2;
+      const baseTop = parentRect.top + (parentRect.height - iconRect.height) / 2;
+
+      // Exact offset from cursor to icon top-left (preserves grab point without jumping)
+      const grabOffsetX = e.clientX - iconRect.left;
+      const grabOffsetY = e.clientY - iconRect.top;
+
       const initialClickX = e.clientX;
       const initialClickY = e.clientY;
-      startX = e.clientX - currentX;
-      startY = e.clientY - currentY;
       lastClientX = e.clientX;
       tiltAngle = 0;
 
       icon.style.zIndex = '9999';
-      icon.style.transition = 'none';
 
       function onPointerMove(me) {
         if (!isDragging) return;
+        if (activePointerId !== null && me.pointerId !== undefined && me.pointerId !== activePointerId) return;
+
         const totalDist = Math.hypot(me.clientX - initialClickX, me.clientY - initialClickY);
 
         if (!hasMoved && totalDist > 4) {
           hasMoved = true;
           icon.classList.add('is-dragging');
+          document.body.classList.add('is-icon-dragging');
         }
 
         if (hasMoved) {
-          const dx = me.clientX - startX;
-          const dy = me.clientY - startY;
+          // Precise target screen coordinates
+          const targetScreenLeft = me.clientX - grabOffsetX;
+          const targetScreenTop = me.clientY - grabOffsetY;
 
+          // Clamp strictly within desktop boundaries (8px margin, dock margin 80px)
+          const clampedScreenLeft = Math.max(8, Math.min(window.innerWidth - iconRect.width - 8, targetScreenLeft));
+          const clampedScreenTop = Math.max(8, Math.min(window.innerHeight - 80 - iconRect.height, targetScreenTop));
+
+          currentX = clampedScreenLeft - baseLeft;
+          currentY = clampedScreenTop - baseTop;
+
+          // Velocity-based micro tilt
           const deltaX = me.clientX - lastClientX;
           lastClientX = me.clientX;
           tiltAngle = tiltAngle * 0.65 + (deltaX * 1.5) * 0.35;
-          tiltAngle = Math.max(-12, Math.min(12, tiltAngle));
+          tiltAngle = Math.max(-10, Math.min(10, tiltAngle));
 
-          currentX = dx;
-          currentY = dy;
-          icon.style.transform = `translate3d(${currentX}px, ${currentY}px, 0) scale(1.08) rotate(${tiltAngle.toFixed(1)}deg)`;
+          icon.style.transform = `translate3d(${Math.round(currentX)}px, ${Math.round(currentY)}px, 0) scale(1.06) rotate(${tiltAngle.toFixed(1)}deg)`;
         }
       }
 
-      function onPointerUp() {
+      function onPointerUp(ue) {
         if (!isDragging) return;
+        if (ue && activePointerId !== null && ue.pointerId !== undefined && ue.pointerId !== activePointerId) return;
+
         isDragging = false;
+        activeDraggedIcon = null;
+
         icon.classList.remove('is-dragging');
+        document.body.classList.remove('is-icon-dragging');
+
         window.removeEventListener('pointermove', onPointerMove);
         window.removeEventListener('pointerup', onPointerUp);
         window.removeEventListener('pointercancel', onPointerUp);
 
+        icon.style.transition = '';
+
         if (hasMoved) {
+          // Suppress ghost click event immediately following a drag
+          const blockGhostClick = (ce) => {
+            ce.stopPropagation();
+            ce.preventDefault();
+            icon.removeEventListener('click', blockGhostClick, true);
+          };
+          icon.addEventListener('click', blockGhostClick, true);
+          setTimeout(() => icon.removeEventListener('click', blockGhostClick, true), 120);
+
           const isColliding = checkIconCollision(icon, currentX, currentY);
 
           if (isColliding) {
@@ -1232,10 +1276,17 @@ function initDesktopIcons() {
                 rotation: 0,
                 duration: 0.35,
                 ease: "back.out(1.4)",
-                onComplete: () => { icon.style.zIndex = '20'; }
+                onComplete: () => {
+                  icon.style.zIndex = '20';
+                  if (currentX === 0 && currentY === 0) {
+                    icon.style.transform = '';
+                  } else {
+                    icon.style.transform = `translate3d(${Math.round(currentX)}px, ${Math.round(currentY)}px, 0)`;
+                  }
+                }
               });
             } else {
-              icon.style.transform = `translate3d(${currentX}px, ${currentY}px, 0) scale(1)`;
+              icon.style.transform = (currentX !== 0 || currentY !== 0) ? `translate3d(${Math.round(currentX)}px, ${Math.round(currentY)}px, 0)` : '';
               icon.style.zIndex = '20';
             }
           } else {
@@ -1256,12 +1307,19 @@ function initDesktopIcons() {
                 y: currentY,
                 scale: 1,
                 rotation: 0,
-                duration: 0.3,
+                duration: 0.25,
                 ease: "power2.out",
-                onComplete: () => { icon.style.zIndex = '20'; }
+                onComplete: () => {
+                  icon.style.zIndex = '20';
+                  if (currentX === 0 && currentY === 0) {
+                    icon.style.transform = '';
+                  } else {
+                    icon.style.transform = `translate3d(${Math.round(currentX)}px, ${Math.round(currentY)}px, 0)`;
+                  }
+                }
               });
             } else {
-              icon.style.transform = `translate3d(${currentX}px, ${currentY}px, 0) scale(1)`;
+              icon.style.transform = (currentX !== 0 || currentY !== 0) ? `translate3d(${Math.round(currentX)}px, ${Math.round(currentY)}px, 0)` : '';
               icon.style.zIndex = '20';
             }
           }
@@ -1277,7 +1335,7 @@ function initDesktopIcons() {
         }
       }
 
-      window.addEventListener('pointermove', onPointerMove, { passive: true });
+      window.addEventListener('pointermove', onPointerMove);
       window.addEventListener('pointerup', onPointerUp);
       window.addEventListener('pointercancel', onPointerUp);
     });
