@@ -1,0 +1,1647 @@
+<!DOCTYPE html>
+<html lang="es" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5, viewport-fit=cover" />
+  <title>Iván Pieretto — Portfolio OS</title>
+  <meta name="description" content="Portfolio OS interactivo de Iván Pieretto. Desarrollador Full Stack. Explora proyectos, experiencia y habilidades en una experiencia de sistema operativo interactivo." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230066FF'/%3E%3Ctext x='16' y='21' font-family='system-ui, sans-serif' font-size='14' font-weight='800' fill='white' text-anchor='middle'%3EIP%3C/text%3E%3C/svg%3E" />
+  <link rel="stylesheet" href="core.css" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body class="antialiased">
+
+  <!-- ==================== BOOT & LOGIN SUBSYSTEM ==================== -->
+  <div id="boot-screen" class="boot-screen">
+    <!-- Phase 1: Lock View -->
+    <div id="lock-view" class="lock-view" onclick="transitionLockToLogin()">
+      <div style="text-align: center; margin-top: 1.5rem;">
+        <div id="lock-clock" class="lock-clock-large">11:42 PM</div>
+        <div id="lock-date" class="lock-date-large">Jueves, 1 de Octubre</div>
+      </div>
+
+      <div class="lock-unlock-hint">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+        <span id="lock-hint-text">Hacé click o presioná cualquier tecla para desbloquear</span>
+      </div>
+    </div>
+
+    <!-- Phase 2: Login View with Password Animation -->
+    <div id="login-view" class="login-view">
+      <div class="login-card">
+        <div class="login-avatar-ring">
+          <div class="login-avatar-inner">IP</div>
+        </div>
+
+        <h2 class="login-name">Iván Pieretto</h2>
+        <div class="login-role">Full Stack Developer</div>
+
+        <div class="login-input-wrap">
+          <input type="password" id="login-password" readonly placeholder="Contraseña" class="login-password-input" />
+          <button id="login-submit-btn" class="login-submit-btn" aria-label="Entrar" onclick="submitLogin()">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+              <polyline points="12 5 19 12 12 19"></polyline>
+            </svg>
+          </button>
+        </div>
+
+        <div class="login-status-row">
+          <div id="login-spinner" class="login-spinner"></div>
+          <span id="login-status-text">Iniciando sesión como invitado…</span>
+        </div>
+
+        <div class="login-hint" id="login-hint-text">
+          Presioná <kbd>Enter</kbd> o <kbd>→</kbd> para entrar ya
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== DESKTOP ROOT CONTAINER ==================== -->
+  <div class="relative w-full h-screen overflow-hidden">
+
+    <!-- Desktop Background (Calm, Serene, Chill Default) -->
+    <div id="desktop-bg" class="absolute inset-0" aria-hidden="true" style="background: #090a0f url('wallpaper.jpg') center/cover no-repeat; transition: background 0.4s ease;">
+      <canvas id="wallpaper-canvas" style="position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; display: none; z-index: 1;"></canvas>
+    </div>
+
+    <!-- Screen Reader Status -->
+    <div role="status" aria-live="polite" class="sr-only">Portfolio OS listo</div>
+
+    <!-- ==================== DESKTOP ICONS GRID (9x4) ==================== -->
+    <div class="absolute inset-0 z-10 desktop-grid-container" style="display: grid; grid-template-columns: repeat(9, 1fr); grid-template-rows: repeat(4, 1fr); gap: 0.5rem; padding-top: calc(1rem + var(--safe-top, 0px)); padding-right: calc(1rem + var(--safe-right, 0px)); padding-bottom: calc(4.75rem + var(--safe-bottom, 0px)); padding-left: calc(1rem + var(--safe-left, 0px)); pointer-events: none;">
+
+      <!-- Cell 1 / 1: About Me -->
+      <div class="desktop-grid-cell relative" style="grid-area: 1 / 1; display: flex; align-items: center; justify-content: center;">
+        <div class="desktop-icon desktop-enter-icon" role="button" tabindex="0" data-window-origin="about" aria-label="About Me">
+          <div class="desktop-icon-image">
+            <span aria-hidden="true" class="app-tile app-tile-color" style="width: 3.5rem; height: 3.5rem; --tile-light: #60a5fa; --tile-dark: #2563eb; background: linear-gradient(135deg, rgb(96, 165, 250), rgb(37, 99, 235));">
+              <svg xmlns="http://www.w3.org/2000/svg" width="56%" height="56%" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-user"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+            </span>
+          </div>
+          <span class="desktop-icon-label">About Me</span>
+        </div>
+      </div>
+
+      <!-- Cell 1 / 2: Iván IA -->
+      <div class="desktop-grid-cell relative" style="grid-area: 1 / 2; display: flex; align-items: center; justify-content: center;">
+        <div class="desktop-icon desktop-enter-icon" role="button" tabindex="0" data-window-origin="chat" aria-label="Iván AI">
+          <div class="desktop-icon-image">
+            <span aria-hidden="true" class="app-tile app-tile-color" style="width: 3.5rem; height: 3.5rem; --tile-light: #a78bfa; --tile-dark: #7c3aed; background: linear-gradient(135deg, rgb(167, 139, 250), rgb(124, 58, 237));">
+              <svg xmlns="http://www.w3.org/2000/svg" width="56%" height="56%" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-message-square"><path d="M22 17a2 2 0 0 1-2 2H6.828a2 2 0 0 0-1.414.586l-2.202 2.202A.71.71 0 0 1 2 21.286V5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2z"></path></svg>
+            </span>
+          </div>
+          <span class="desktop-icon-label">Iván AI</span>
+        </div>
+      </div>
+
+      <div class="desktop-grid-cell relative" style="grid-area: 1 / 3;"></div>
+      <div class="desktop-grid-cell relative" style="grid-area: 1 / 4;"></div>
+      <div class="desktop-grid-cell relative" style="grid-area: 1 / 5;"></div>
+      <div class="desktop-grid-cell relative" style="grid-area: 1 / 6;"></div>
+      <div class="desktop-grid-cell relative" style="grid-area: 1 / 7;"></div>
+      <div class="desktop-grid-cell relative" style="grid-area: 1 / 8;"></div>
+      <div class="desktop-grid-cell relative" style="grid-area: 1 / 9;"></div>
+
+      <!-- Cell 2 / 1: Resume -->
+      <div class="desktop-grid-cell relative" style="grid-area: 2 / 1; display: flex; align-items: center; justify-content: center;">
+        <div class="desktop-icon desktop-enter-icon" role="button" tabindex="0" data-window-origin="resume" aria-label="Resume">
+          <div class="desktop-icon-image">
+            <span aria-hidden="true" class="app-tile app-tile-color" style="width: 3.5rem; height: 3.5rem; --tile-light: #f472b6; --tile-dark: #db2777; background: linear-gradient(135deg, rgb(244, 114, 182), rgb(219, 39, 119));">
+              <svg xmlns="http://www.w3.org/2000/svg" width="56%" height="56%" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-file-user"><path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z"></path><path d="M14 2v5a1 1 0 0 0 1 1h5"></path><path d="M16 22a4 4 0 0 0-8 0"></path><circle cx="12" cy="15" r="3"></circle></svg>
+            </span>
+          </div>
+          <span class="desktop-icon-label">Resume</span>
+        </div>
+      </div>
+
+      <!-- Cell 2 / 2: Terminal -->
+      <div class="desktop-grid-cell relative" style="grid-area: 2 / 2; display: flex; align-items: center; justify-content: center;">
+        <div class="desktop-icon desktop-enter-icon" role="button" tabindex="0" data-window-origin="terminal" aria-label="Terminal">
+          <div class="desktop-icon-image">
+            <span aria-hidden="true" class="app-tile app-tile-color" style="width: 3.5rem; height: 3.5rem; --tile-light: #64748b; --tile-dark: #1e293b; background: linear-gradient(135deg, rgb(100, 116, 139), rgb(30, 41, 59));">
+              <svg xmlns="http://www.w3.org/2000/svg" width="56%" height="56%" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-terminal"><path d="M12 19h8"></path><path d="m4 17 6-6-6-6"></path></svg>
+            </span>
+          </div>
+          <span class="desktop-icon-label">Terminal</span>
+        </div>
+      </div>
+
+      <div class="desktop-grid-cell relative" style="grid-area: 2 / 3;"></div>
+      <div class="desktop-grid-cell relative" style="grid-area: 2 / 4;"></div>
+      <div class="desktop-grid-cell relative" style="grid-area: 2 / 5;"></div>
+      <div class="desktop-grid-cell relative" style="grid-area: 2 / 6;"></div>
+      <div class="desktop-grid-cell relative" style="grid-area: 2 / 7;"></div>
+      <div class="desktop-grid-cell relative" style="grid-area: 2 / 8;"></div>
+      <div class="desktop-grid-cell relative" style="grid-area: 2 / 9;"></div>
+
+      <!-- Cell 3 / 1: Projects -->
+      <div class="desktop-grid-cell relative" style="grid-area: 3 / 1; display: flex; align-items: center; justify-content: center;">
+        <div class="desktop-icon desktop-enter-icon" role="button" tabindex="0" data-window-origin="projects" aria-label="Projects">
+          <div class="desktop-icon-image">
+            <span aria-hidden="true" class="app-tile app-tile-color" style="width: 3.5rem; height: 3.5rem; --tile-light: #38bdf8; --tile-dark: #2563eb; background: linear-gradient(135deg, rgb(56, 189, 248), rgb(37, 99, 235));">
+              <svg xmlns="http://www.w3.org/2000/svg" width="56%" height="56%" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-globe"><circle cx="12" cy="12" r="10"></circle><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"></path><path d="M2 12h20"></path></svg>
+            </span>
+          </div>
+          <span class="desktop-icon-label">Projects</span>
+        </div>
+      </div>
+
+      <div class="desktop-grid-cell relative" style="grid-area: 3 / 2;"></div>
+      <div class="desktop-grid-cell relative" style="grid-area: 3 / 3;"></div>
+      <div class="desktop-grid-cell relative" style="grid-area: 3 / 4;"></div>
+      <div class="desktop-grid-cell relative" style="grid-area: 3 / 5;"></div>
+      <div class="desktop-grid-cell relative" style="grid-area: 3 / 6;"></div>
+      <div class="desktop-grid-cell relative" style="grid-area: 3 / 7;"></div>
+      <div class="desktop-grid-cell relative" style="grid-area: 3 / 8;"></div>
+      <div class="desktop-grid-cell relative" style="grid-area: 3 / 9;"></div>
+
+      <!-- Cell 4 / 1: Contact -->
+      <div class="desktop-grid-cell relative" style="grid-area: 4 / 1; display: flex; align-items: center; justify-content: center;">
+        <div class="desktop-icon desktop-enter-icon" role="button" tabindex="0" data-window-origin="contact" aria-label="Contact">
+          <div class="desktop-icon-image">
+            <span aria-hidden="true" class="app-tile app-tile-color" style="width: 3.5rem; height: 3.5rem; --tile-light: #34d399; --tile-dark: #059669; background: linear-gradient(135deg, rgb(52, 211, 153), rgb(5, 150, 105));">
+              <svg xmlns="http://www.w3.org/2000/svg" width="56%" height="56%" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-mail"><path d="m22 7-8.991 5.727a2 2 0 0 1-2.009 0L2 7"></path><rect x="2" y="4" width="20" height="16" rx="2"></rect></svg>
+            </span>
+          </div>
+          <span class="desktop-icon-label">Contact</span>
+        </div>
+      </div>
+
+      <div class="desktop-grid-cell relative" style="grid-area: 4 / 2;"></div>
+      <div class="desktop-grid-cell relative" style="grid-area: 4 / 3;"></div>
+      <div class="desktop-grid-cell relative" style="grid-area: 4 / 4;"></div>
+      <div class="desktop-grid-cell relative" style="grid-area: 4 / 5;"></div>
+      <div class="desktop-grid-cell relative" style="grid-area: 4 / 6;"></div>
+      <div class="desktop-grid-cell relative" style="grid-area: 4 / 7;"></div>
+      <div class="desktop-grid-cell relative" style="grid-area: 4 / 8;"></div>
+      <div class="desktop-grid-cell relative" style="grid-area: 4 / 9;"></div>
+    </div>
+
+    <!-- ==================== WINDOWS CONTAINER ==================== -->
+    <div id="windows-container" class="absolute inset-0 overflow-hidden pointer-events-none z-20">
+
+      <!-- ==================== WINDOW: ABOUT ME ==================== -->
+      <div class="os-window" id="win-about" style="display: none; width: min(780px, 94vw); height: min(540px, 84vh);">
+        <div class="os-window-titlebar no-select" onpointerdown="focusWindow('about'); handleWindowDragStart(event, 'win-about')" ondblclick="toggleMaximize('about')">
+          <div class="traffic-lights">
+            <button type="button" class="traffic-light close" title="Cerrar" aria-label="Cerrar" onclick="closeWindow('about')"><svg viewBox="0 0 10 10"><path d="M2.5,2.5 L7.5,7.5 M7.5,2.5 L2.5,7.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg></button>
+            <button type="button" class="traffic-light minimize" title="Minimizar" aria-label="Minimizar" onclick="minimizeWindow('about')"><svg viewBox="0 0 10 10"><path d="M2,5 L8,5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg></button>
+            <button type="button" class="traffic-light maximize" title="Maximizar" aria-label="Maximizar" onclick="toggleMaximize('about')"><svg viewBox="0 0 10 10"><path d="M2.5,4.5 L4.5,2.5 L7.5,2.5 L7.5,5.5 L5.5,7.5 L2.5,7.5 Z" fill="currentColor"/></svg></button>
+          </div>
+          <div class="os-window-title">
+            <span class="app-tile app-tile-color" style="width: 1.15rem; height: 1.15rem; --tile-light: #60a5fa; --tile-dark: #2563eb; background: linear-gradient(135deg, rgb(96, 165, 250), rgb(37, 99, 235)); border-radius: 4px;">
+              <svg xmlns="http://www.w3.org/2000/svg" width="60%" height="60%" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-user"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+            </span>
+            <span>Sobre Mí — Iván Pieretto</span>
+          </div>
+          <div class="os-window-controls">
+            <button type="button" class="os-window-control-btn close" title="Cerrar ventana" aria-label="Cerrar ventana" onclick="closeWindow('about')">
+              <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            </button>
+          </div>
+        </div>
+        <div class="os-window-content">
+          <div class="about-hero">
+            <div class="about-avatar">IP</div>
+            <div style="flex: 1;">
+              <div style="display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap; margin-bottom: 0.35rem;">
+                <h2 style="font-size: 1.35rem; font-weight: 700; margin: 0; color: #fff; letter-spacing: -0.01em;">Iván Pieretto</h2>
+                <span id="about-badge-status" class="apple-badge apple-badge-emerald">● Disponible para trabajar</span>
+                <span class="apple-badge apple-badge-blue">📍 Rosario, Santa Fe, Argentina</span>
+              </div>
+              <p id="about-role-title" style="margin: 0 0 0.5rem 0; color: #7dd3fc; font-weight: 600; font-size: 0.88rem;">
+                Técnico Superior en Desarrollo de Software · Front-End & IA
+              </p>
+              <p id="about-bio-desc" style="margin: 0;">
+                Me apasiona resolver problemas reales con tecnología, desde construir aplicaciones que impacten el día a día hasta explorar flujos de trabajo con inteligencia artificial. Ese mismo impulso me llevó a gestionar proyectos propios. Busco desarrollarme profesionalmente como Software Developer, Front-End Developer o IT Trainee.
+              </p>
+            </div>
+          </div>
+
+          <div style="padding: 0.75rem 1.25rem; border-bottom: 1px solid rgba(255, 255, 255, 0.08); background: rgba(0, 0, 0, 0.2); display: flex; align-items: center; justify-content: space-between;">
+            <div class="apple-segmented-control">
+              <button id="about-tab-btn-edu" class="apple-segment-btn about-tab-btn active" onclick="switchAboutTab(this, 'about-tab-education')"><svg class="tab-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:inline-block;vertical-align:-2px;margin-right:4px;"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg><span class="tab-text">Educación & Certificaciones</span></button>
+              <button id="about-tab-btn-skills" class="apple-segment-btn about-tab-btn" onclick="switchAboutTab(this, 'about-tab-skills')"><svg class="tab-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:inline-block;vertical-align:-2px;margin-right:4px;"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg><span class="tab-text">Competencias Técnicas</span></button>
+              <button id="about-tab-btn-contact" class="apple-segment-btn about-tab-btn" onclick="switchAboutTab(this, 'about-tab-contact')"><svg class="tab-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:inline-block;vertical-align:-2px;margin-right:4px;"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg><span class="tab-text">Contacto Directo</span></button>
+            </div>
+            <a id="about-btn-download-cv" href="cv_ivan_pieretto.jpg" download="CV_Ivan_Pieretto.jpg" class="apple-btn-primary" style="font-size: 0.75rem; padding: 0.35rem 0.85rem;">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+              <span>Descargar CV</span>
+            </a>
+          </div>
+
+          <div class="about-body">
+            <!-- Tab 1: Educación & Certificaciones -->
+            <div id="about-tab-education" class="about-tab-pane">
+              <h3 id="about-edu-formal-title" style="color: #64d2ff; margin: 0 0 0.75rem 0; font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.05em;">Educación Formal</h3>
+              <div class="apple-group">
+                <div class="apple-group-item">
+                  <div>
+                    <strong style="color: #fff; font-size: 0.92rem; display: block;">Técnico Superior en Desarrollo de Software</strong>
+                    <span style="font-size: 0.8rem; color: rgba(255,255,255,0.65);">Complejo Educativo Brigadier López</span>
+                  </div>
+                  <span id="about-edu-date-1" class="apple-badge apple-badge-blue">Marzo 2026 – Actualidad</span>
+                </div>
+                <div class="apple-group-item">
+                  <div>
+                    <strong style="color: #fff; font-size: 0.92rem; display: block;">Bachiller en Economía y Administración</strong>
+                    <span style="font-size: 0.8rem; color: rgba(255,255,255,0.65);">E.E.S.O. 605</span>
+                  </div>
+                  <span id="about-edu-date-2" class="apple-badge">Marzo 2018 – Diciembre 2021</span>
+                </div>
+              </div>
+
+              <h3 id="about-edu-certs-title" style="color: #a78bfa; margin: 1.25rem 0 0.75rem 0; font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.05em;">Certificaciones Profesionales</h3>
+              <div class="apple-group">
+                <div class="apple-group-item">
+                  <span style="color: #fff; font-size: 0.85rem;">Introduction to Generative AI and Agents</span>
+                  <span style="font-size: 0.75rem; color: rgba(255,255,255,0.6);">Microsoft Learn, 2026</span>
+                </div>
+                <div class="apple-group-item">
+                  <span style="color: #fff; font-size: 0.85rem;">Describe Cloud Computing</span>
+                  <span style="font-size: 0.75rem; color: rgba(255,255,255,0.6);">Microsoft Learn, 2026</span>
+                </div>
+                <div class="apple-group-item">
+                  <span style="color: #fff; font-size: 0.85rem;">Describe Cloud Service Types</span>
+                  <span style="font-size: 0.75rem; color: rgba(255,255,255,0.6);">Microsoft Learn, 2026</span>
+                </div>
+                <div class="apple-group-item">
+                  <span style="color: #fff; font-size: 0.85rem;">Describe the Benefits of Using Cloud Services</span>
+                  <span style="font-size: 0.75rem; color: rgba(255,255,255,0.6);">Microsoft Learn, 2026</span>
+                </div>
+                <div class="apple-group-item">
+                  <span style="color: #fff; font-size: 0.85rem;">SQL for Beginners</span>
+                  <span style="font-size: 0.75rem; color: rgba(255,255,255,0.6);">Alison, 2026</span>
+                </div>
+                <div class="apple-group-item">
+                  <span style="color: #fff; font-size: 0.85rem;">Introducción a la Programación</span>
+                  <span style="font-size: 0.75rem; color: rgba(255,255,255,0.6);">Educación IT, 2025</span>
+                </div>
+                <div class="apple-group-item">
+                  <span style="color: #fff; font-size: 0.85rem;">Programación Básica</span>
+                  <span style="font-size: 0.75rem; color: rgba(255,255,255,0.6);">Platzi, 2025</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Tab 2: Competencias Técnicas -->
+            <div id="about-tab-skills" class="about-tab-pane" style="display: none;">
+              <h3 id="about-skills-title-1" style="color: #64d2ff; margin: 0 0 0.6rem 0; font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.05em;">Lenguajes de Programación</h3>
+              <div style="margin-bottom: 1.15rem;">
+                <span class="apple-badge apple-badge-blue">JavaScript (ES6+)</span>
+                <span class="apple-badge apple-badge-blue">TypeScript</span>
+                <span class="apple-badge apple-badge-blue">Python</span>
+                <span class="apple-badge apple-badge-blue">HTML5</span>
+                <span class="apple-badge apple-badge-blue">CSS3</span>
+                <span class="apple-badge apple-badge-blue">SQL</span>
+              </div>
+
+              <h3 id="about-skills-title-2" style="color: #a78bfa; margin: 0 0 0.6rem 0; font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.05em;">Frontend & Gráficos 3D</h3>
+              <div style="margin-bottom: 1.15rem;">
+                <span class="apple-badge apple-badge-purple">React</span>
+                <span class="apple-badge apple-badge-purple">Vite</span>
+                <span class="apple-badge apple-badge-purple">Three.js</span>
+                <span class="apple-badge apple-badge-purple">GSAP</span>
+                <span class="apple-badge apple-badge-purple">Canvas 2D</span>
+                <span class="apple-badge apple-badge-purple">Tailwind CSS</span>
+              </div>
+
+              <h3 id="about-skills-title-3" style="color: #34d399; margin: 0 0 0.6rem 0; font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.05em;">Backend, Mobile & Bases de Datos</h3>
+              <div style="margin-bottom: 1.15rem;">
+                <span class="apple-badge apple-badge-emerald">Node.js</span>
+                <span class="apple-badge apple-badge-emerald">React Native</span>
+                <span class="apple-badge apple-badge-emerald">SQL Relacional</span>
+                <span class="apple-badge apple-badge-emerald">RESTful APIs</span>
+              </div>
+
+              <h3 id="about-skills-title-4" style="color: #f59e0b; margin: 0 0 0.6rem 0; font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.05em;">Cloud & Inteligencia Artificial</h3>
+              <div>
+                <span class="apple-badge apple-badge-amber">Cloud Computing</span>
+                <span class="apple-badge apple-badge-amber">Inteligencia Artificial Generativa</span>
+                <span class="apple-badge apple-badge-amber">Ollama</span>
+                <span class="apple-badge apple-badge-amber">LLMs Locales</span>
+                <span class="apple-badge apple-badge-amber">n8n</span>
+                <span class="apple-badge apple-badge-amber">Git / GitHub</span>
+              </div>
+            </div>
+
+            <!-- Tab 3: Contacto Directo -->
+            <div id="about-tab-contact" class="about-tab-pane" style="display: none;">
+              <div class="apple-group">
+                <div class="apple-group-item">
+                  <div>
+                    <span style="font-size: 0.75rem; color: rgba(255,255,255,0.5); display: block;">Email</span>
+                    <strong style="color: #fff; font-size: 0.9rem;">pierettoivan2004@gmail.com</strong>
+                  </div>
+                  <button onclick="copyToClipboard('pierettoivan2004@gmail.com', 'Email copiado')" class="apple-btn-secondary" style="font-size: 0.75rem; padding: 0.3rem 0.75rem;">Copiar</button>
+                </div>
+                <div class="apple-group-item">
+                  <div>
+                    <span style="font-size: 0.75rem; color: rgba(255,255,255,0.5); display: block;">Teléfono / WhatsApp</span>
+                    <strong style="color: #fff; font-size: 0.9rem;">+54 341 2524472</strong>
+                  </div>
+                  <a href="https://wa.me/543412524472" target="_blank" class="apple-btn-secondary" style="font-size: 0.75rem; padding: 0.3rem 0.75rem;">WhatsApp</a>
+                </div>
+                <div class="apple-group-item">
+                  <div>
+                    <span style="font-size: 0.75rem; color: rgba(255,255,255,0.5); display: block;">Ubicación</span>
+                    <strong style="color: #fff; font-size: 0.9rem;">Rosario, Santa Fe, Argentina</strong>
+                  </div>
+                  <span class="apple-badge">Argentina</span>
+                </div>
+              </div>
+
+              <div style="display: flex; gap: 0.75rem; margin-top: 1.25rem;">
+                <a id="about-contact-btn-github" href="https://github.com/Ivan-rgb-ops" target="_blank" class="apple-btn-secondary" style="flex: 1; text-align: center;">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg>
+                  <span>GitHub Perfil</span>
+                </a>
+                <a href="https://linkedin.com/in/ivan-pieretto" target="_blank" class="apple-btn-secondary" style="flex: 1; text-align: center;">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle></svg>
+                  LinkedIn
+                </a>
+                <button id="about-contact-btn-projects" onclick="openWindow('projects')" class="apple-btn-primary" style="flex: 1;">
+                  Ver Proyectos
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==================== WINDOW: PROJECTS ==================== -->
+      <div class="os-window" id="win-projects" style="display: none; width: min(880px, 95vw); height: min(600px, 86vh);">
+        <div class="os-window-titlebar no-select" onpointerdown="focusWindow('projects'); handleWindowDragStart(event, 'win-projects')" ondblclick="toggleMaximize('projects')">
+          <div class="traffic-lights">
+            <button type="button" class="traffic-light close" title="Cerrar" aria-label="Cerrar" onclick="closeWindow('projects')"><svg viewBox="0 0 10 10"><path d="M2.5,2.5 L7.5,7.5 M7.5,2.5 L2.5,7.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg></button>
+            <button type="button" class="traffic-light minimize" title="Minimizar" aria-label="Minimizar" onclick="minimizeWindow('projects')"><svg viewBox="0 0 10 10"><path d="M2,5 L8,5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg></button>
+            <button type="button" class="traffic-light maximize" title="Maximizar" aria-label="Maximizar" onclick="toggleMaximize('projects')"><svg viewBox="0 0 10 10"><path d="M2.5,4.5 L4.5,2.5 L7.5,2.5 L7.5,5.5 L5.5,7.5 L2.5,7.5 Z" fill="currentColor"/></svg></button>
+          </div>
+          <div class="os-window-title">
+            <span class="app-tile app-tile-color" style="width: 1.15rem; height: 1.15rem; --tile-light: #38bdf8; --tile-dark: #2563eb; background: linear-gradient(135deg, rgb(56, 189, 248), rgb(37, 99, 235)); border-radius: 4px;">
+              <svg xmlns="http://www.w3.org/2000/svg" width="60%" height="60%" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-globe"><circle cx="12" cy="12" r="10"></circle><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"></path><path d="M2 12h20"></path></svg>
+            </span>
+            <span>Proyectos — Iván Pieretto</span>
+          </div>
+          <div class="os-window-controls">
+            <button type="button" class="os-window-control-btn close" title="Cerrar ventana" aria-label="Cerrar ventana" onclick="closeWindow('projects')">
+              <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            </button>
+          </div>
+        </div>
+        <div class="os-window-content">
+          <!-- Safari URL Bar -->
+          <div class="projects-header-bar" style="background: rgba(0, 0, 0, 0.25); border-bottom: 1px solid rgba(255, 255, 255, 0.08);">
+            <div class="projects-url-bar" style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1);">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: #34d399;"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+              <span style="font-family: var(--font-mono); font-size: 0.78rem;">https://github.com/Ivan-rgb-ops</span>
+            </div>
+            <a id="projects-btn-github-all" href="https://github.com/Ivan-rgb-ops" target="_blank" class="apple-btn-secondary" style="font-size: 0.75rem; padding: 0.35rem 0.75rem;">
+              <span>Ver Todos en GitHub ↗</span>
+            </a>
+          </div>
+
+          <div class="projects-bento-grid">
+            <!-- Project 1: adaptIA -->
+            <article class="bento-project-cell" data-project="adaptia">
+              <div class="bento-cell-top">
+                <div class="bento-icon-title-group">
+                  <div class="bento-app-icon" style="background: linear-gradient(135deg, #6366f1, #8b5cf6);">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M12 2a8 8 0 0 0-8 8c0 3.31 2.01 6.16 4.9 7.37.25.1.4.35.4.63v2a2 2 0 0 0 2 2h1.4a2 2 0 0 0 2-2v-2c0-.28.15-.53.4-.63A8 8 0 0 0 20 10a8 8 0 0 0-8-8z"></path><path d="M9 10h6"></path><path d="M12 7v6"></path></svg>
+                  </div>
+                  <div>
+                    <h3 class="bento-title">adaptIA</h3>
+                    <span id="proj-adaptia-sub" class="bento-subtitle">Adaptador de Currículums con IA</span>
+                  </div>
+                </div>
+                <span class="bento-pill-category">IA & LLMs</span>
+              </div>
+              <p id="proj-adaptia-desc" class="bento-desc">
+                Aplicación web creada para adaptar y optimizar currículums utilizando Inteligencia Artificial. Permite ajustar el perfil y la experiencia laboral al perfil del puesto de trabajo en segundos, mejorando la compatibilidad con filtros ATS.
+              </p>
+              <div class="bento-tags-row">
+                <span class="bento-tag">React</span>
+                <span class="bento-tag">AI / LLMs</span>
+                <span class="bento-tag">Tailwind CSS</span>
+                <span class="bento-tag">Vite</span>
+                <span class="bento-tag">Node.js</span>
+              </div>
+              <div class="bento-actions-row">
+                <a href="https://github.com/Ivan-rgb-ops/adaptIA" target="_blank" class="apple-btn-primary" style="flex: 1;">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg>
+                  Ver en GitHub ↗
+                </a>
+                <button onclick="copyToClipboard('https://github.com/Ivan-rgb-ops/adaptIA', 'Enlace copiado')" class="apple-btn-secondary">
+                  Copiar
+                </button>
+              </div>
+            </article>
+
+            <!-- Project 2: Estudio el Oso -->
+            <article class="bento-project-cell" data-project="estudio-el-oso">
+              <div class="bento-cell-top">
+                <div class="bento-icon-title-group">
+                  <div class="bento-app-icon" style="background: linear-gradient(135deg, #f59e0b, #d97706);">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
+                  </div>
+                  <div>
+                    <h3 class="bento-title">Estudio el Oso</h3>
+                    <span id="proj-oso-sub" class="bento-subtitle">Landings de Fotografía · Studio Bear</span>
+                  </div>
+                </div>
+                <span class="bento-pill-category">3D & GSAP</span>
+              </div>
+              <p id="proj-oso-desc" class="bento-desc">
+                Desarrollo de sitio web a medida para un estudio de fotografía profesional especializado en eventos. Presenta animaciones dirigidas por scroll y la construcción desde cero de una lente 3D procedural como pieza central de la experiencia visual interactiva.
+              </p>
+              <div class="bento-tags-row">
+                <span class="bento-tag">Three.js</span>
+                <span class="bento-tag">GSAP</span>
+                <span class="bento-tag">Canvas 2D</span>
+                <span class="bento-tag">JavaScript</span>
+              </div>
+              <div class="bento-actions-row">
+                <a href="https://github.com/Ivan-rgb-ops/estudioeloso" target="_blank" class="apple-btn-primary" style="flex: 1;">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg>
+                  Ver en GitHub ↗
+                </a>
+                <button onclick="copyToClipboard('https://github.com/Ivan-rgb-ops/estudioeloso', 'Enlace copiado')" class="apple-btn-secondary">
+                  Copiar
+                </button>
+              </div>
+            </article>
+
+            <!-- Project 3: Chappie-bot -->
+            <article class="bento-project-cell" data-project="chappie-bot">
+              <div class="bento-cell-top">
+                <div class="bento-icon-title-group">
+                  <div class="bento-app-icon" style="background: linear-gradient(135deg, #0ea5e9, #0284c7);">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><rect x="3" y="11" width="18" height="10" rx="2"></rect><circle cx="12" cy="5" r="2"></circle><path d="M12 7v4"></path><line x1="8" y1="16" x2="8" y2="16"></line><line x1="16" y1="16" x2="16" y2="16"></line></svg>
+                  </div>
+                  <div>
+                    <h3 class="bento-title">Chappie-bot</h3>
+                    <span id="proj-chappie-sub" class="bento-subtitle">Asistente de IA en tu Computadora</span>
+                  </div>
+                </div>
+                <span class="bento-pill-category">Local LLM & Voz</span>
+              </div>
+              <p id="proj-chappie-desc" class="bento-desc">
+                Diseño y desarrollo de un asistente de IA integrado en el sistema con motor propio de memoria persistente y personalidad dinámica. Implementación de interfaz web, control por voz con wake word y clasificación de intención mediante LLMs locales para ejecutar comandos del sistema.
+              </p>
+              <div class="bento-tags-row">
+                <span class="bento-tag">Ollama</span>
+                <span class="bento-tag">LLMs Locales</span>
+                <span class="bento-tag">Node.js</span>
+                <span class="bento-tag">Python (Voz)</span>
+                <span class="bento-tag">Electron</span>
+              </div>
+              <div class="bento-actions-row">
+                <a href="https://github.com/Ivan-rgb-ops/Chappie-bot" target="_blank" class="apple-btn-primary" style="flex: 1;">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg>
+                  Ver en GitHub ↗
+                </a>
+                <button onclick="copyToClipboard('https://github.com/Ivan-rgb-ops/Chappie-bot', 'Enlace copiado')" class="apple-btn-secondary">
+                  Copiar
+                </button>
+              </div>
+            </article>
+          </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==================== WINDOW: RESUME ==================== -->
+      <div class="os-window" id="win-resume" style="display: none; width: min(840px, 95vw); height: min(640px, 88vh);">
+        <div class="os-window-titlebar no-select" onpointerdown="focusWindow('resume'); handleWindowDragStart(event, 'win-resume')" ondblclick="toggleMaximize('resume')">
+          <div class="traffic-lights">
+            <button type="button" class="traffic-light close" title="Cerrar" aria-label="Cerrar" onclick="closeWindow('resume')"><svg viewBox="0 0 10 10"><path d="M2.5,2.5 L7.5,7.5 M7.5,2.5 L2.5,7.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg></button>
+            <button type="button" class="traffic-light minimize" title="Minimizar" aria-label="Minimizar" onclick="minimizeWindow('resume')"><svg viewBox="0 0 10 10"><path d="M2,5 L8,5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg></button>
+            <button type="button" class="traffic-light maximize" title="Maximizar" aria-label="Maximizar" onclick="toggleMaximize('resume')"><svg viewBox="0 0 10 10"><path d="M2.5,4.5 L4.5,2.5 L7.5,2.5 L7.5,5.5 L5.5,7.5 L2.5,7.5 Z" fill="currentColor"/></svg></button>
+          </div>
+          <div class="os-window-title">
+            <span class="app-tile app-tile-color" style="width: 1.15rem; height: 1.15rem; --tile-light: #f472b6; --tile-dark: #db2777; background: linear-gradient(135deg, rgb(244, 114, 182), rgb(219, 39, 119)); border-radius: 4px;">
+              <svg xmlns="http://www.w3.org/2000/svg" width="60%" height="60%" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-file-user"><path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z"></path><path d="M14 2v5a1 1 0 0 0 1 1h5"></path><path d="M16 22a4 4 0 0 0-8 0"></path><circle cx="12" cy="15" r="3"></circle></svg>
+            </span>
+            <span>Currículum Vitae — Iván Pieretto</span>
+          </div>
+          <div class="os-window-controls">
+            <button type="button" class="os-window-control-btn close" title="Cerrar ventana" aria-label="Cerrar ventana" onclick="closeWindow('resume')">
+              <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            </button>
+          </div>
+        </div>
+        <div class="os-window-content">
+          <!-- Top Control Header -->
+          <div style="padding: 0.85rem 1.5rem; background: rgba(0, 0, 0, 0.25); border-bottom: 1px solid rgba(255, 255, 255, 0.08); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.75rem;">
+            <div class="apple-segmented-control">
+              <button id="resume-tab-btn-preview" class="apple-segment-btn resume-segment-btn active" onclick="switchResumeTab(this, 'tab-resume-preview')">
+                📄 Vista Previa de CV
+              </button>
+              <button id="resume-tab-btn-text" class="apple-segment-btn resume-segment-btn" onclick="switchResumeTab(this, 'tab-resume-text')">
+                📋 Datos en Formato Texto
+              </button>
+            </div>
+            <div style="display: flex; gap: 0.6rem; align-items: center;">
+              <a id="resume-btn-fullscreen" href="cv_ivan_pieretto.jpg" target="_blank" class="apple-btn-secondary">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                <span>Pantalla Completa</span>
+              </a>
+              <a id="resume-btn-download" href="cv_ivan_pieretto.jpg" download="CV_Ivan_Pieretto.jpg" class="apple-btn-primary">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                <span>Descargar CV</span>
+              </a>
+            </div>
+          </div>
+
+          <!-- Mode 1: High Resolution Visual Preview of user's CV Image -->
+          <div id="tab-resume-preview" class="resume-tab-pane">
+            <div class="cv-preview-container">
+              <div class="cv-image-card">
+                <a href="cv_ivan_pieretto.jpg" target="_blank" title="Hacé click para abrir en tamaño completo">
+                  <img src="cv_ivan_pieretto.jpg" alt="Currículum Vitae Oficial de Iván Pieretto" />
+                </a>
+              </div>
+              <div class="cv-preview-footer">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: #64d2ff;"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line><line x1="11" y1="8" x2="11" y2="14"></line><line x1="8" y1="11" x2="14" y2="11"></line></svg>
+                <span id="resume-preview-hint">Hacé click en la imagen para ver en máxima resolución o usá el botón <strong>Descargar CV</strong></span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Mode 2: Interactive Text Transcript matching CV -->
+          <div id="tab-resume-text" class="resume-tab-pane" style="display: none; padding: 2rem;">
+            <div style="border-bottom: 1px solid rgba(255, 255, 255, 0.1); padding-bottom: 1.5rem; margin-bottom: 1.5rem; display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem;">
+              <div>
+                <h1 style="font-size: 1.75rem; font-weight: 700; margin: 0 0 0.35rem 0; color: #fff; letter-spacing: -0.02em;">Iván Pieretto</h1>
+                <p id="resume-text-role" style="margin: 0; color: #7dd3fc; font-size: 0.95rem; font-weight: 600;">Técnico Superior en Desarrollo de Software</p>
+                <p style="margin: 0.4rem 0 0 0; color: rgba(255,255,255,0.72); font-size: 0.85rem;">
+                  Rosario, Santa Fe, Argentina · +54 341 2524472 · pierettoivan2004@gmail.com
+                </p>
+              </div>
+              <div style="display: flex; gap: 0.5rem;">
+                <a href="https://linkedin.com/in/ivan-pieretto" target="_blank" class="apple-btn-secondary" style="font-size: 0.75rem;">LinkedIn</a>
+                <a href="https://github.com/Ivan-rgb-ops" target="_blank" class="apple-btn-secondary" style="font-size: 0.75rem;">GitHub</a>
+              </div>
+            </div>
+
+            <section style="margin-bottom: 1.75rem;">
+              <h2 id="resume-text-about-h" style="color: #64d2ff; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.06em; margin: 0 0 0.75rem 0;">Sobre Mí</h2>
+              <p id="resume-text-about-p" style="font-size: 0.88rem; color: rgba(255,255,255,0.85); line-height: 1.6; margin: 0;">
+                Me apasiona resolver problemas reales con tecnología, desde construir aplicaciones que impacten el día a día hasta explorar flujos de trabajo con inteligencia artificial. Ese mismo impulso me llevó a gestionar proyectos propios. Busco desarrollarme profesionalmente como Software Developer, Front-End Developer o IT Trainee, aportando capacidad analítica, aprendizaje continuo y orientación a resultados.
+              </p>
+            </section>
+
+            <section style="margin-bottom: 1.75rem;">
+              <h2 id="resume-text-edu-h" style="color: #64d2ff; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.06em; margin: 0 0 0.75rem 0;">Educación</h2>
+              <div class="apple-group">
+                <div class="apple-group-item">
+                  <div>
+                    <strong style="color: #fff; font-size: 0.95rem; display: block;">Técnico Superior en Desarrollo de Software</strong>
+                    <span style="font-size: 0.82rem; color: rgba(255,255,255,0.7);">Complejo Educativo Brigadier López</span>
+                  </div>
+                  <span class="apple-badge apple-badge-blue">Marzo 2026 – Actualidad</span>
+                </div>
+                <div class="apple-group-item">
+                  <div>
+                    <strong style="color: #fff; font-size: 0.95rem; display: block;">Bachiller en Economía y Administración</strong>
+                    <span style="font-size: 0.82rem; color: rgba(255,255,255,0.7);">E.E.S.O. 605</span>
+                  </div>
+                  <span class="apple-badge">Marzo 2018 – Diciembre 2021</span>
+                </div>
+              </div>
+            </section>
+
+            <section style="margin-bottom: 1.75rem;">
+              <h2 id="resume-text-certs-h" style="color: #64d2ff; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.06em; margin: 0 0 0.75rem 0;">Certificaciones</h2>
+              <div class="apple-group">
+                <div class="apple-group-item">
+                  <span style="color: #fff; font-size: 0.88rem;">Introduction to Generative AI and Agents</span>
+                  <span style="font-size: 0.8rem; color: rgba(255,255,255,0.6);">Microsoft Learn, 2026</span>
+                </div>
+                <div class="apple-group-item">
+                  <span style="color: #fff; font-size: 0.88rem;">Describe Cloud Computing</span>
+                  <span style="font-size: 0.8rem; color: rgba(255,255,255,0.6);">Microsoft Learn, 2026</span>
+                </div>
+                <div class="apple-group-item">
+                  <span style="color: #fff; font-size: 0.88rem;">Describe Cloud Service Types</span>
+                  <span style="font-size: 0.8rem; color: rgba(255,255,255,0.6);">Microsoft Learn, 2026</span>
+                </div>
+                <div class="apple-group-item">
+                  <span style="color: #fff; font-size: 0.88rem;">Describe the Benefits of Using Cloud Services</span>
+                  <span style="font-size: 0.8rem; color: rgba(255,255,255,0.6);">Microsoft Learn, 2026</span>
+                </div>
+                <div class="apple-group-item">
+                  <span style="color: #fff; font-size: 0.88rem;">SQL for Beginners</span>
+                  <span style="font-size: 0.8rem; color: rgba(255,255,255,0.6);">Alison, 2026</span>
+                </div>
+                <div class="apple-group-item">
+                  <span style="color: #fff; font-size: 0.88rem;">Introducción a la Programación</span>
+                  <span style="font-size: 0.8rem; color: rgba(255,255,255,0.6);">Educación IT, 2025</span>
+                </div>
+                <div class="apple-group-item">
+                  <span style="color: #fff; font-size: 0.88rem;">Programación Básica</span>
+                  <span style="font-size: 0.8rem; color: rgba(255,255,255,0.6);">Platzi, 2025</span>
+                </div>
+              </div>
+            </section>
+
+            <section style="margin-bottom: 1.75rem;">
+              <h2 id="resume-text-skills-h" style="color: #64d2ff; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.06em; margin: 0 0 0.75rem 0;">Competencias Técnicas</h2>
+              <div class="apple-group">
+                <div class="apple-group-item">
+                  <strong style="color: rgba(255,255,255,0.7); font-size: 0.82rem; min-width: 140px;">Lenguajes:</strong>
+                  <span style="color: #fff; font-size: 0.85rem; flex: 1;">HTML5, CSS3, JavaScript, TypeScript, SQL, Python</span>
+                </div>
+                <div class="apple-group-item">
+                  <strong style="color: rgba(255,255,255,0.7); font-size: 0.82rem; min-width: 140px;">Frontend:</strong>
+                  <span style="color: #fff; font-size: 0.85rem; flex: 1;">React, Vite, Three.js, GSAP</span>
+                </div>
+                <div class="apple-group-item">
+                  <strong style="color: rgba(255,255,255,0.7); font-size: 0.82rem; min-width: 140px;">Backend:</strong>
+                  <span style="color: #fff; font-size: 0.85rem; flex: 1;">Node.js</span>
+                </div>
+                <div class="apple-group-item">
+                  <strong style="color: rgba(255,255,255,0.7); font-size: 0.82rem; min-width: 140px;">Mobile:</strong>
+                  <span style="color: #fff; font-size: 0.85rem; flex: 1;">React Native</span>
+                </div>
+                <div class="apple-group-item">
+                  <strong style="color: rgba(255,255,255,0.7); font-size: 0.82rem; min-width: 140px;">Bases de Datos:</strong>
+                  <span style="color: #fff; font-size: 0.85rem; flex: 1;">SQL, Bases de Datos Relacionales</span>
+                </div>
+                <div class="apple-group-item">
+                  <strong style="color: rgba(255,255,255,0.7); font-size: 0.82rem; min-width: 140px;">Cloud e IA:</strong>
+                  <span style="color: #fff; font-size: 0.85rem; flex: 1;">Cloud Computing, Inteligencia Artificial Generativa, n8n, Ollama, LLMs</span>
+                </div>
+                <div class="apple-group-item">
+                  <strong style="color: rgba(255,255,255,0.7); font-size: 0.82rem; min-width: 140px;">Herramientas:</strong>
+                  <span style="color: #fff; font-size: 0.85rem; flex: 1;">Git, GitHub</span>
+                </div>
+              </div>
+            </section>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==================== WINDOW: CONTACT ==================== -->
+      <div class="os-window" id="win-contact" style="display: none; width: min(680px, 92vw); height: min(500px, 82vh);">
+        <div class="os-window-titlebar no-select" onpointerdown="focusWindow('contact'); handleWindowDragStart(event, 'win-contact')" ondblclick="toggleMaximize('contact')">
+          <div class="traffic-lights">
+            <button type="button" class="traffic-light close" title="Cerrar" aria-label="Cerrar" onclick="closeWindow('contact')"><svg viewBox="0 0 10 10"><path d="M2.5,2.5 L7.5,7.5 M7.5,2.5 L2.5,7.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg></button>
+            <button type="button" class="traffic-light minimize" title="Minimizar" aria-label="Minimizar" onclick="minimizeWindow('contact')"><svg viewBox="0 0 10 10"><path d="M2,5 L8,5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg></button>
+            <button type="button" class="traffic-light maximize" title="Maximizar" aria-label="Maximizar" onclick="toggleMaximize('contact')"><svg viewBox="0 0 10 10"><path d="M2.5,4.5 L4.5,2.5 L7.5,2.5 L7.5,5.5 L5.5,7.5 L2.5,7.5 Z" fill="currentColor"/></svg></button>
+          </div>
+          <div class="os-window-title">
+            <span class="app-tile app-tile-color" style="width: 1.15rem; height: 1.15rem; --tile-light: #34d399; --tile-dark: #059669; background: linear-gradient(135deg, rgb(52, 211, 153), rgb(5, 150, 105)); border-radius: 4px;">
+              <svg xmlns="http://www.w3.org/2000/svg" width="60%" height="60%" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-mail"><path d="m22 7-8.991 5.727a2 2 0 0 1-2.009 0L2 7"></path><rect x="2" y="4" width="20" height="16" rx="2"></rect></svg>
+            </span>
+            <span>Contacto — Iván Pieretto</span>
+          </div>
+          <div class="os-window-controls">
+            <button type="button" class="os-window-control-btn close" title="Cerrar ventana" aria-label="Cerrar ventana" onclick="closeWindow('contact')">
+              <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            </button>
+          </div>
+        </div>
+        <div class="os-window-content" style="padding: 1.75rem; display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+          <div>
+            <h3 id="contact-title" style="margin: 0 0 0.5rem 0; color: #fff; font-size: 1.15rem; font-weight: 700;">¡Hablemos!</h3>
+            <p id="contact-sub" style="font-size: 0.85rem; color: rgba(255,255,255,0.75); line-height: 1.5; margin: 0 0 1.25rem 0;">
+              ¿Tenés una propuesta laboral, un proyecto en mente o querés conectar? Mandame un mensaje directo por el formulario o por mis canales oficiales.
+            </p>
+
+            <div class="apple-group" style="margin-bottom: 1rem;">
+              <div class="apple-group-item">
+                <div>
+                  <span style="display: block; font-size: 0.72rem; color: rgba(255,255,255,0.5);">Email Oficial</span>
+                  <span style="font-size: 0.84rem; font-weight: 600; color: #fff;">pierettoivan2004@gmail.com</span>
+                </div>
+                <button onclick="copyToClipboard('pierettoivan2004@gmail.com', 'Email copiado')" class="apple-btn-secondary" style="font-size: 0.72rem; padding: 0.3rem 0.65rem;">Copiar</button>
+              </div>
+
+              <div class="apple-group-item">
+                <div>
+                  <span style="display: block; font-size: 0.72rem; color: rgba(255,255,255,0.5);">Teléfono / WhatsApp</span>
+                  <span style="font-size: 0.84rem; font-weight: 600; color: #fff;">+54 341 2524472</span>
+                </div>
+                <a href="https://wa.me/543412524472" target="_blank" class="apple-btn-secondary" style="font-size: 0.72rem; padding: 0.3rem 0.65rem;">Chat</a>
+              </div>
+            </div>
+
+            <div style="display: flex; gap: 0.6rem;">
+              <a href="https://linkedin.com/in/ivan-pieretto" target="_blank" class="apple-btn-secondary" style="flex: 1; text-align: center; font-size: 0.78rem;">LinkedIn ↗</a>
+              <a href="https://github.com/Ivan-rgb-ops" target="_blank" class="apple-btn-secondary" style="flex: 1; text-align: center; font-size: 0.78rem;">GitHub ↗</a>
+            </div>
+          </div>
+
+          <form onsubmit="handleContactSubmit(event)" style="display: flex; flex-direction: column; gap: 0.75rem; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 1.25rem;">
+            <div>
+              <label id="contact-label-name" style="display: block; font-size: 0.75rem; color: rgba(255,255,255,0.7); margin-bottom: 0.3rem; font-weight: 500;">Tu Nombre</label>
+              <input type="text" id="contact-name" required placeholder="Nombre completo" style="width: 100%; box-sizing: border-box; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); border-radius: 8px; padding: 0.55rem 0.75rem; color: #fff; font-size: 0.82rem; outline: none; transition: border-color 0.15s ease;" />
+            </div>
+
+            <div>
+              <label id="contact-label-email" style="display: block; font-size: 0.75rem; color: rgba(255,255,255,0.7); margin-bottom: 0.3rem; font-weight: 500;">Tu Email</label>
+              <input type="email" id="contact-email" required placeholder="nombre@correo.com" style="width: 100%; box-sizing: border-box; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); border-radius: 8px; padding: 0.55rem 0.75rem; color: #fff; font-size: 0.82rem; outline: none; transition: border-color 0.15s ease;" />
+            </div>
+
+            <div>
+              <label id="contact-label-msg" style="display: block; font-size: 0.75rem; color: rgba(255,255,255,0.7); margin-bottom: 0.3rem; font-weight: 500;">Mensaje</label>
+              <textarea id="contact-msg" rows="3" required placeholder="Escribe tu propuesta o mensaje..." style="width: 100%; box-sizing: border-box; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); border-radius: 8px; padding: 0.55rem 0.75rem; color: #fff; font-size: 0.82rem; outline: none; resize: none; transition: border-color 0.15s ease;"></textarea>
+            </div>
+
+            <button id="contact-btn-submit" type="submit" class="apple-btn-primary" style="padding: 0.65rem; width: 100%; font-size: 0.85rem; border-radius: 8px; margin-top: 0.25rem;">
+              Enviar Mensaje
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <!-- ==================== WINDOW: TERMINAL ==================== -->
+      <div class="os-window" id="win-terminal" style="display: none; width: min(640px, 92vw); height: min(420px, 78vh);">
+        <div class="os-window-titlebar no-select" onpointerdown="focusWindow('terminal'); handleWindowDragStart(event, 'win-terminal')" ondblclick="toggleMaximize('terminal')">
+          <div class="traffic-lights">
+            <button type="button" class="traffic-light close" title="Cerrar" aria-label="Cerrar" onclick="closeWindow('terminal')"><svg viewBox="0 0 10 10"><path d="M2.5,2.5 L7.5,7.5 M7.5,2.5 L2.5,7.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg></button>
+            <button type="button" class="traffic-light minimize" title="Minimizar" aria-label="Minimizar" onclick="minimizeWindow('terminal')"><svg viewBox="0 0 10 10"><path d="M2,5 L8,5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg></button>
+            <button type="button" class="traffic-light maximize" title="Maximizar" aria-label="Maximizar" onclick="toggleMaximize('terminal')"><svg viewBox="0 0 10 10"><path d="M2.5,4.5 L4.5,2.5 L7.5,2.5 L7.5,5.5 L5.5,7.5 L2.5,7.5 Z" fill="currentColor"/></svg></button>
+          </div>
+          <div class="os-window-title">
+            <span class="app-tile app-tile-color" style="width: 1.15rem; height: 1.15rem; --tile-light: #64748b; --tile-dark: #1e293b; background: linear-gradient(135deg, rgb(100, 116, 139), rgb(30, 41, 59)); border-radius: 4px;">
+              <svg xmlns="http://www.w3.org/2000/svg" width="60%" height="60%" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-terminal"><path d="M12 19h8"></path><path d="m4 17 6-6-6-6"></path></svg>
+            </span>
+            <span>Terminal</span>
+          </div>
+          <div class="os-window-controls">
+            <button type="button" class="os-window-control-btn close" title="Cerrar ventana" aria-label="Cerrar ventana" onclick="closeWindow('terminal')">
+              <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            </button>
+          </div>
+        </div>
+        <div class="os-window-content">
+          <div class="terminal-body">
+            <div id="term-welcome-msg" style="color: rgba(255,255,255,0.6); margin-bottom: 0.75rem;">
+              Portfolio OS v2.0.0 (x86_64-ivan-web)<br>
+              Escribí <span style="color: var(--color-primary, #22d3c5);">help</span> para ver todos los comandos disponibles.
+            </div>
+            <div id="term-output"></div>
+            <div style="display: flex; align-items: center; gap: 0.5rem; margin-top: 0.25rem;">
+              <span class="terminal-prompt">guest@ivan-os:~$</span>
+              <input type="text" id="term-input" class="terminal-input" autofocus autocomplete="off" spellcheck="false" />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==================== WINDOW: IVÁN AI ==================== -->
+      <div class="os-window" id="win-chat" style="display: none; width: min(560px, 92vw); height: min(520px, 82vh);">
+        <div class="os-window-titlebar no-select" onpointerdown="focusWindow('chat'); handleWindowDragStart(event, 'win-chat')" ondblclick="toggleMaximize('chat')">
+          <div class="traffic-lights">
+            <button type="button" class="traffic-light close" title="Cerrar" aria-label="Cerrar" onclick="closeWindow('chat')"><svg viewBox="0 0 10 10"><path d="M2.5,2.5 L7.5,7.5 M7.5,2.5 L2.5,7.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg></button>
+            <button type="button" class="traffic-light minimize" title="Minimizar" aria-label="Minimizar" onclick="minimizeWindow('chat')"><svg viewBox="0 0 10 10"><path d="M2,5 L8,5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg></button>
+            <button type="button" class="traffic-light maximize" title="Maximizar" aria-label="Maximizar" onclick="toggleMaximize('chat')"><svg viewBox="0 0 10 10"><path d="M2.5,4.5 L4.5,2.5 L7.5,2.5 L7.5,5.5 L5.5,7.5 L2.5,7.5 Z" fill="currentColor"/></svg></button>
+          </div>
+          <div class="os-window-title">
+            <span class="app-tile app-tile-color" style="width: 1.15rem; height: 1.15rem; --tile-light: #a78bfa; --tile-dark: #7c3aed; background: linear-gradient(135deg, rgb(167, 139, 250), rgb(124, 58, 237)); border-radius: 4px;">
+              <svg xmlns="http://www.w3.org/2000/svg" width="60%" height="60%" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-message-square"><path d="M22 17a2 2 0 0 1-2 2H6.828a2 2 0 0 0-1.414.586l-2.202 2.202A.71.71 0 0 1 2 21.286V5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2z"></path></svg>
+            </span>
+            <span>Iván AI</span>
+          </div>
+          <div class="os-window-controls">
+            <button type="button" class="os-window-control-btn close" title="Cerrar ventana" aria-label="Cerrar ventana" onclick="closeWindow('chat')">
+              <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            </button>
+          </div>
+        </div>
+        <div class="os-window-content">
+          <div class="chat-container">
+            <div class="chat-messages" id="chat-messages">
+              <div id="chat-greeting-bubble" class="chat-bubble ai">
+                ¡Hola! Soy <strong>Iván AI</strong>, el asistente virtual de este portfolio. Preguntame lo que quieras sobre la experiencia de Iván, sus tecnologías favoritas o sus proyectos.
+              </div>
+            </div>
+
+            <!-- Quick Suggestions -->
+            <div class="chat-quick-suggestions">
+              <button type="button" class="chat-suggestion-btn" data-prompt="¿Cuáles son tus tecnologías principales?">⚡ Stack principal</button>
+              <button type="button" class="chat-suggestion-btn" data-prompt="¿Qué proyectos destacados tenés?">🚀 Proyectos</button>
+              <button type="button" class="chat-suggestion-btn" data-prompt="¿Cómo puedo contactarte?">📬 Contacto</button>
+            </div>
+
+            <div class="chat-input-bar">
+              <input type="text" id="chat-input" placeholder="Pregúntale algo a Iván AI..." style="flex: 1; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); border-radius: 0.6rem; padding: 0.6rem 0.85rem; color: #fff; font-size: 0.85rem; outline: none;" />
+              <button id="chat-send-btn" style="background: var(--color-primary, #22d3c5); color: #04201d; border: none; border-radius: 0.6rem; padding: 0.6rem 1rem; font-weight: 700; cursor: pointer;">Enviar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==================== WINDOW: SETTINGS ==================== -->
+      <div class="os-window" id="win-settings" style="display: none; width: min(600px, 92vw); height: min(480px, 80vh);">
+        <div class="os-window-titlebar no-select" onpointerdown="focusWindow('settings'); handleWindowDragStart(event, 'win-settings')" ondblclick="toggleMaximize('settings')">
+          <div class="traffic-lights">
+            <button type="button" class="traffic-light close" title="Cerrar" aria-label="Cerrar" onclick="closeWindow('settings')"><svg viewBox="0 0 10 10"><path d="M2.5,2.5 L7.5,7.5 M7.5,2.5 L2.5,7.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg></button>
+            <button type="button" class="traffic-light minimize" title="Minimizar" aria-label="Minimizar" onclick="minimizeWindow('settings')"><svg viewBox="0 0 10 10"><path d="M2,5 L8,5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg></button>
+            <button type="button" class="traffic-light maximize" title="Maximizar" aria-label="Maximizar" onclick="toggleMaximize('settings')"><svg viewBox="0 0 10 10"><path d="M2.5,4.5 L4.5,2.5 L7.5,2.5 L7.5,5.5 L5.5,7.5 L2.5,7.5 Z" fill="currentColor"/></svg></button>
+          </div>
+          <div class="os-window-title">
+            <span class="app-tile app-tile-color" style="width: 1.15rem; height: 1.15rem; --tile-light: #94a3b8; --tile-dark: #334155; background: linear-gradient(135deg, rgb(148, 163, 184), rgb(51, 65, 85)); border-radius: 4px;">
+              <svg xmlns="http://www.w3.org/2000/svg" width="60%" height="60%" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-settings"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+            </span>
+            <span>Configuración</span>
+          </div>
+          <div class="os-window-controls">
+            <button type="button" class="os-window-control-btn close" title="Cerrar ventana" aria-label="Cerrar ventana" onclick="closeWindow('settings')">
+              <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            </button>
+          </div>
+        </div>
+        <div class="os-window-content" style="padding: 1.5rem;">
+          <h3 id="settings-title" style="margin: 0 0 1rem 0; color: #fff; font-size: 1.1rem;">Personalización</h3>
+
+          <div style="margin-bottom: 1.5rem;">
+            <label id="settings-accent-label" style="display: block; font-size: 0.85rem; font-weight: 600; color: rgba(255,255,255,0.8); margin-bottom: 0.6rem;">Color de Acento</label>
+            <div style="display: flex; gap: 0.75rem;">
+              <button class="accent-dot" data-color="cyan" style="width: 2rem; height: 2rem; border-radius: 50%; background: #22d3c5; border: 2px solid #fff; cursor: pointer;"></button>
+              <button class="accent-dot" data-color="blue" style="width: 2rem; height: 2rem; border-radius: 50%; background: #38bdf8; border: 2px solid rgba(255,255,255,0.2); cursor: pointer;"></button>
+              <button class="accent-dot" data-color="purple" style="width: 2rem; height: 2rem; border-radius: 50%; background: #a855f7; border: 2px solid rgba(255,255,255,0.2); cursor: pointer;"></button>
+              <button class="accent-dot" data-color="emerald" style="width: 2rem; height: 2rem; border-radius: 50%; background: #10b981; border: 2px solid rgba(255,255,255,0.2); cursor: pointer;"></button>
+              <button class="accent-dot" data-color="rose" style="width: 2rem; height: 2rem; border-radius: 50%; background: #f43f5e; border: 2px solid rgba(255,255,255,0.2); cursor: pointer;"></button>
+            </div>
+          </div>
+
+          <div style="margin-bottom: 1.5rem;">
+            <label id="settings-wallpaper-label" style="display: block; font-size: 0.85rem; font-weight: 600; color: rgba(255,255,255,0.8); margin-bottom: 0.6rem;">Fondo de Pantalla</label>
+            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+              <button onclick="setWallpaper('starlight')" style="padding: 0.5rem 0.85rem; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.15); border-radius: 0.5rem; color: #fff; font-size: 0.8rem; cursor: pointer;">✨ Estrellas Soft</button>
+              <button onclick="setWallpaper('velvet-aurora')" style="padding: 0.5rem 0.85rem; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.15); border-radius: 0.5rem; color: #fff; font-size: 0.8rem; cursor: pointer;">🌌 Aurora Velvet</button>
+              <button onclick="setWallpaper('sunset-calm')" style="padding: 0.5rem 0.85rem; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.15); border-radius: 0.5rem; color: #fff; font-size: 0.8rem; cursor: pointer;">🌅 Atardecer Zen</button>
+              <button id="settings-btn-more-wallpapers" onclick="showModal('modal-wallpapers')" style="padding: 0.5rem 0.85rem; background: var(--color-primary, #22d3c5); color: #04201d; border: none; border-radius: 0.5rem; font-weight: 600; font-size: 0.8rem; cursor: pointer;">Ver todos los fondos…</button>
+            </div>
+          </div>
+
+          <div>
+            <label id="settings-perf-label" style="display: block; font-size: 0.85rem; font-weight: 600; color: rgba(255,255,255,0.8); margin-bottom: 0.6rem;">Modo de Rendimiento</label>
+            <button id="settings-btn-perf" onclick="showToast('Modo de rendimiento activado')" style="padding: 0.6rem 1rem; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.15); border-radius: 0.5rem; color: #fff; font-size: 0.8rem; cursor: pointer;">Optimizar transiciones</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==================== WINDOW: DOOM (EASTER EGG) ==================== -->
+      <div class="os-window" id="win-doom" style="display: none; width: min(760px, 94vw); height: min(540px, 82vh);">
+        <div class="os-window-titlebar no-select" onpointerdown="focusWindow('doom'); handleWindowDragStart(event, 'win-doom')" ondblclick="toggleMaximize('doom')">
+          <div class="traffic-lights">
+            <button type="button" class="traffic-light close" title="Cerrar" aria-label="Cerrar" onclick="closeWindow('doom')"><svg viewBox="0 0 10 10"><path d="M2.5,2.5 L7.5,7.5 M7.5,2.5 L2.5,7.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg></button>
+            <button type="button" class="traffic-light minimize" title="Minimizar" aria-label="Minimizar" onclick="minimizeWindow('doom')"><svg viewBox="0 0 10 10"><path d="M2,5 L8,5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg></button>
+            <button type="button" class="traffic-light maximize" title="Maximizar" aria-label="Maximizar" onclick="toggleMaximize('doom')"><svg viewBox="0 0 10 10"><path d="M2.5,4.5 L4.5,2.5 L7.5,2.5 L7.5,5.5 L5.5,7.5 L2.5,7.5 Z" fill="currentColor"/></svg></button>
+          </div>
+          <div class="os-window-title">
+            <span class="app-tile app-tile-color" style="width: 1.15rem; height: 1.15rem; --tile-light: #ef4444; --tile-dark: #991b1b; background: linear-gradient(135deg, rgb(239, 68, 68), rgb(153, 27, 27)); border-radius: 4px; display: inline-flex; align-items: center; justify-content: center; font-weight: 900; font-size: 0.75rem; color: #fff;">
+              ☠️
+            </span>
+            <span>DOOM (1993) — id Software</span>
+          </div>
+          <div class="os-window-controls">
+            <button type="button" class="os-window-control-btn close" title="Cerrar ventana" aria-label="Cerrar ventana" onclick="closeWindow('doom')">
+              <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            </button>
+          </div>
+        </div>
+        <div class="os-window-content" style="padding: 0; background: #000; overflow: hidden; display: flex; flex-direction: column; position: relative;">
+          <iframe id="doom-iframe" data-src="https://archive.org/embed/doom_dos" src="" style="width: 100%; height: 100%; border: none; background: #000; flex: 1;" allow="autoplay; fullscreen; gamepad" allowfullscreen></iframe>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ==================== FLOATING START MENU CARD ==================== -->
+    <div id="start-menu-card" class="start-menu-card">
+      <div style="display: flex; align-items: center; gap: 0.85rem; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 0.85rem;">
+        <div class="about-avatar" style="width: 3rem; height: 3rem; font-size: 1.1rem; border-radius: 0.75rem;">IP</div>
+        <div>
+          <h3 style="margin: 0; font-size: 1rem; color: #fff;">Iván Pieretto</h3>
+          <span id="start-menu-subtitle" style="font-size: 0.75rem; color: var(--color-primary, #22d3c5);">Desarrollador de Software · Rosario, Santa Fe</span>
+        </div>
+      </div>
+
+      <div style="position: relative;">
+        <svg style="position: absolute; left: 0.85rem; top: 50%; transform: translateY(-50%); opacity: 0.5;" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+        <input type="text" id="start-search" class="start-search-input" placeholder="Buscar apps, proyectos, ajustes..." />
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; max-height: 260px; overflow-y: auto;">
+        <button class="start-app-item" onclick="openWindow('about')" style="display: flex; align-items: center; gap: 0.6rem; padding: 0.6rem; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.06); border-radius: 0.6rem; color: #fff; cursor: pointer; text-align: left;">
+          <span class="app-tile app-tile-color" style="width: 2rem; height: 2rem; --tile-light: #60a5fa; --tile-dark: #2563eb; background: linear-gradient(135deg, rgb(96, 165, 250), rgb(37, 99, 235)); border-radius: 6px;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="56%" height="56%" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+          </span>
+          <span style="font-size: 0.82rem; font-weight: 500;">Sobre Mí</span>
+        </button>
+
+        <button class="start-app-item" onclick="openWindow('projects')" style="display: flex; align-items: center; gap: 0.6rem; padding: 0.6rem; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.06); border-radius: 0.6rem; color: #fff; cursor: pointer; text-align: left;">
+          <span class="app-tile app-tile-color" style="width: 2rem; height: 2rem; --tile-light: #38bdf8; --tile-dark: #2563eb; background: linear-gradient(135deg, rgb(56, 189, 248), rgb(37, 99, 235)); border-radius: 6px;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="56%" height="56%" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"></path><path d="M2 12h20"></path></svg>
+          </span>
+          <span style="font-size: 0.82rem; font-weight: 500;">Proyectos</span>
+        </button>
+
+        <button class="start-app-item" onclick="openWindow('resume')" style="display: flex; align-items: center; gap: 0.6rem; padding: 0.6rem; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.06); border-radius: 0.6rem; color: #fff; cursor: pointer; text-align: left;">
+          <span class="app-tile app-tile-color" style="width: 2rem; height: 2rem; --tile-light: #f472b6; --tile-dark: #db2777; background: linear-gradient(135deg, rgb(244, 114, 182), rgb(219, 39, 119)); border-radius: 6px;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="56%" height="56%" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z"></path><path d="M14 2v5a1 1 0 0 0 1 1h5"></path><path d="M16 22a4 4 0 0 0-8 0"></path><circle cx="12" cy="15" r="3"></circle></svg>
+          </span>
+          <span style="font-size: 0.82rem; font-weight: 500;">Currículum</span>
+        </button>
+
+        <button class="start-app-item" onclick="openWindow('terminal')" style="display: flex; align-items: center; gap: 0.6rem; padding: 0.6rem; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.06); border-radius: 0.6rem; color: #fff; cursor: pointer; text-align: left;">
+          <span class="app-tile app-tile-color" style="width: 2rem; height: 2rem; --tile-light: #64748b; --tile-dark: #1e293b; background: linear-gradient(135deg, rgb(100, 116, 139), rgb(30, 41, 59)); border-radius: 6px;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="56%" height="56%" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 19h8"></path><path d="m4 17 6-6-6-6"></path></svg>
+          </span>
+          <span style="font-size: 0.82rem; font-weight: 500;">Terminal</span>
+        </button>
+
+        <button class="start-app-item" onclick="openWindow('chat')" style="display: flex; align-items: center; gap: 0.6rem; padding: 0.6rem; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.06); border-radius: 0.6rem; color: #fff; cursor: pointer; text-align: left;">
+          <span class="app-tile app-tile-color" style="width: 2rem; height: 2rem; --tile-light: #a78bfa; --tile-dark: #7c3aed; background: linear-gradient(135deg, rgb(167, 139, 250), rgb(124, 58, 237)); border-radius: 6px;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="56%" height="56%" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 17a2 2 0 0 1-2 2H6.828a2 2 0 0 0-1.414.586l-2.202 2.202A.71.71 0 0 1 2 21.286V5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2z"></path></svg>
+          </span>
+          <span style="font-size: 0.82rem; font-weight: 500;">Iván AI</span>
+        </button>
+
+        <button class="start-app-item" onclick="openWindow('settings')" style="display: flex; align-items: center; gap: 0.6rem; padding: 0.6rem; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.06); border-radius: 0.6rem; color: #fff; cursor: pointer; text-align: left;">
+          <span class="app-tile app-tile-color" style="width: 2rem; height: 2rem; --tile-light: #94a3b8; --tile-dark: #334155; background: linear-gradient(135deg, rgb(148, 163, 184), rgb(51, 65, 85)); border-radius: 6px;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="56%" height="56%" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+          </span>
+          <span style="font-size: 0.82rem; font-weight: 500;">Configuración</span>
+        </button>
+      </div>
+
+      <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 0.75rem;">
+        <button id="start-btn-copy-email" onclick="copyToClipboard('pierettoivan2004@gmail.com', 'Email copiado')" style="background: transparent; border: none; color: rgba(255,255,255,0.7); font-size: 0.75rem; cursor: pointer;">📋 Copiar Email</button>
+        <button id="start-btn-close-wins" onclick="closeAllWindows(); toggleStartMenu();" style="background: transparent; border: none; color: rgba(255,255,255,0.7); font-size: 0.75rem; cursor: pointer;" title="Cerrar todas las ventanas (Alt+W)">✕ Cerrar ventanas</button>
+        <button id="start-btn-lock" onclick="lockScreen()" style="background: transparent; border: none; color: rgba(255,255,255,0.7); font-size: 0.75rem; cursor: pointer;">🔒 Bloquear</button>
+      </div>
+    </div>
+
+    <!-- ==================== FLOATING ISLAND TASKBAR (BOTTOM CENTER) ==================== -->
+    <nav id="taskbar-nav" aria-label="Taskbar" data-shell="true" class="glass-effect fixed z-[9000] px-2 pb-1.5 shadow-elevated" style="bottom: calc(0.65rem + var(--safe-bottom, 0px));">
+      <div id="dock-items-container" class="flex items-end gap-1">
+        <!-- Start / Launchpad Button -->
+        <div class="relative flex-none origin-bottom dock-item-wrap" data-dock-origin="start">
+          <button id="start-btn" type="button" aria-label="Menú Inicio" class="block h-full w-full rounded-[24%] outline-none transition-transform active:scale-95 focus-visible:ring-2 focus-visible:ring-primary">
+            <span aria-hidden="true" class="app-tile app-tile-start" style="width: 100%; height: 100%;">
+              <svg xmlns="http://www.w3.org/2000/svg" width="56%" height="56%" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-layout-grid"><rect width="7" height="7" x="3" y="3" rx="1"></rect><rect width="7" height="7" x="14" y="3" rx="1"></rect><rect width="7" height="7" x="14" y="14" rx="1"></rect><rect width="7" height="7" x="3" y="14" rx="1"></rect></svg>
+            </span>
+          </button>
+          <span role="tooltip" class="island-tooltip">Inicio</span>
+        </div>
+
+        <span aria-hidden="true" class="mx-1 mb-2 h-6 w-px flex-none self-end bg-foreground/15"></span>
+
+        <!-- About Me -->
+        <div class="relative flex-none origin-bottom dock-item-wrap" data-dock-origin="about">
+          <button type="button" aria-label="Sobre Mí" data-window-origin="about" class="island-icon block h-full w-full rounded-[24%] outline-none focus-visible:ring-2 focus-visible:ring-primary">
+            <span aria-hidden="true" class="app-tile app-tile-color" style="width: 100%; height: 100%; --tile-light: #60a5fa; --tile-dark: #2563eb; background: linear-gradient(135deg, rgb(96, 165, 250), rgb(37, 99, 235));">
+              <svg xmlns="http://www.w3.org/2000/svg" width="56%" height="56%" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-user"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+            </span>
+          </button>
+          <span role="tooltip" class="island-tooltip">Sobre Mí</span>
+          <span class="dock-app-indicator"></span>
+        </div>
+
+        <!-- Projects -->
+        <div class="relative flex-none origin-bottom dock-item-wrap" data-dock-origin="projects">
+          <button type="button" aria-label="Proyectos" data-window-origin="projects" class="island-icon block h-full w-full rounded-[24%] outline-none focus-visible:ring-2 focus-visible:ring-primary">
+            <span aria-hidden="true" class="app-tile app-tile-color" style="width: 100%; height: 100%; --tile-light: #38bdf8; --tile-dark: #2563eb; background: linear-gradient(135deg, rgb(56, 189, 248), rgb(37, 99, 235));">
+              <svg xmlns="http://www.w3.org/2000/svg" width="56%" height="56%" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-globe"><circle cx="12" cy="12" r="10"></circle><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"></path><path d="M2 12h20"></path></svg>
+            </span>
+          </button>
+          <span role="tooltip" class="island-tooltip">Proyectos</span>
+          <span class="dock-app-indicator"></span>
+        </div>
+
+        <!-- Iván AI -->
+        <div class="relative flex-none origin-bottom dock-item-wrap" data-dock-origin="chat">
+          <button type="button" aria-label="Iván AI" data-window-origin="chat" class="island-icon block h-full w-full rounded-[24%] outline-none focus-visible:ring-2 focus-visible:ring-primary">
+            <span aria-hidden="true" class="app-tile app-tile-color" style="width: 100%; height: 100%; --tile-light: #a78bfa; --tile-dark: #7c3aed; background: linear-gradient(135deg, rgb(167, 139, 250), rgb(124, 58, 237));">
+              <svg xmlns="http://www.w3.org/2000/svg" width="56%" height="56%" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-message-square"><path d="M22 17a2 2 0 0 1-2 2H6.828a2 2 0 0 0-1.414.586l-2.202 2.202A.71.71 0 0 1 2 21.286V5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2z"></path></svg>
+            </span>
+          </button>
+          <span role="tooltip" class="island-tooltip">Iván AI</span>
+          <span class="dock-app-indicator"></span>
+        </div>
+
+        <!-- Resume -->
+        <div class="relative flex-none origin-bottom dock-item-wrap" data-dock-origin="resume">
+          <button type="button" aria-label="Currículum" data-window-origin="resume" class="island-icon block h-full w-full rounded-[24%] outline-none focus-visible:ring-2 focus-visible:ring-primary">
+            <span aria-hidden="true" class="app-tile app-tile-color" style="width: 100%; height: 100%; --tile-light: #f472b6; --tile-dark: #db2777; background: linear-gradient(135deg, rgb(244, 114, 182), rgb(219, 39, 119));">
+              <svg xmlns="http://www.w3.org/2000/svg" width="56%" height="56%" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-file-user"><path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z"></path><path d="M14 2v5a1 1 0 0 0 1 1h5"></path><path d="M16 22a4 4 0 0 0-8 0"></path><circle cx="12" cy="15" r="3"></circle></svg>
+            </span>
+          </button>
+          <span role="tooltip" class="island-tooltip">Currículum</span>
+          <span class="dock-app-indicator"></span>
+        </div>
+
+        <!-- Contact -->
+        <div class="relative flex-none origin-bottom dock-item-wrap" data-dock-origin="contact">
+          <button type="button" aria-label="Contacto" data-window-origin="contact" class="island-icon block h-full w-full rounded-[24%] outline-none focus-visible:ring-2 focus-visible:ring-primary">
+            <span aria-hidden="true" class="app-tile app-tile-color" style="width: 100%; height: 100%; --tile-light: #34d399; --tile-dark: #059669; background: linear-gradient(135deg, rgb(52, 211, 153), rgb(5, 150, 105));">
+              <svg xmlns="http://www.w3.org/2000/svg" width="56%" height="56%" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-mail"><path d="m22 7-8.991 5.727a2 2 0 0 1-2.009 0L2 7"></path><rect x="2" y="4" width="20" height="16" rx="2"></rect></svg>
+            </span>
+          </button>
+          <span role="tooltip" class="island-tooltip">Contacto</span>
+          <span class="dock-app-indicator"></span>
+        </div>
+
+        <!-- Terminal -->
+        <div class="relative flex-none origin-bottom dock-item-wrap" data-dock-origin="terminal">
+          <button type="button" aria-label="Terminal" data-window-origin="terminal" class="island-icon block h-full w-full rounded-[24%] outline-none focus-visible:ring-2 focus-visible:ring-primary">
+            <span aria-hidden="true" class="app-tile app-tile-color" style="width: 100%; height: 100%; --tile-light: #64748b; --tile-dark: #1e293b; background: linear-gradient(135deg, rgb(100, 116, 139), rgb(30, 41, 59));">
+              <svg xmlns="http://www.w3.org/2000/svg" width="56%" height="56%" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-terminal"><path d="M12 19h8"></path><path d="m4 17 6-6-6-6"></path></svg>
+            </span>
+          </button>
+          <span role="tooltip" class="island-tooltip">Terminal</span>
+          <span class="dock-app-indicator"></span>
+        </div>
+
+        <span aria-hidden="true" class="mx-1 mb-2 h-6 w-px flex-none self-end bg-foreground/15"></span>
+
+        <!-- Recruiter 1-Click Summary App -->
+        <div class="relative flex-none origin-bottom dock-item-wrap" data-dock-origin="recruiter">
+          <button type="button" aria-label="Modo Reclutador" onclick="showModal('modal-recruiter')" class="island-icon block h-full w-full rounded-[24%] outline-none focus-visible:ring-2 focus-visible:ring-primary">
+            <span aria-hidden="true" class="app-tile" style="width: 100%; height: 100%; background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); color: #fff; box-shadow: 0 4px 14px rgba(245, 158, 11, 0.3);">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+            </span>
+          </button>
+          <span role="tooltip" class="island-tooltip">Reclutador</span>
+        </div>
+      </div>
+    </nav>
+
+    <!-- ==================== FLOATING SYSTEM TRAY (BOTTOM RIGHT) ==================== -->
+    <div role="group" aria-label="System tray" data-shell="true" class="glass-effect fixed z-[9000] flex items-center gap-1.5 rounded-2xl px-2.5 shadow-elevated" style="right: calc(0.75rem + var(--safe-right, 0px)); bottom: calc(0.65rem + var(--safe-bottom, 0px)); height: 3.25rem;">
+      <!-- Spotlight Search (Cmd+K) -->
+      <button type="button" class="h-9 px-2 rounded-lg flex items-center gap-1.5 transition-colors hover:bg-foreground/5 outline-none focus-visible:ring-2 focus-visible:ring-primary relative" title="Buscar apps y comandos (Ctrl + K)" onclick="toggleSpotlight()">
+        <svg class="size-4 text-foreground/80" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+        <span class="text-3xs font-semibold px-1 py-0.5 rounded bg-white/10 text-foreground/75">⌘K</span>
+      </button>
+
+      <!-- Change Language Button -->
+      <button class="h-9 px-2 rounded-lg hover:bg-black/5 dark:hover:bg-white/5 transition-colors flex items-center gap-1" title="Cambiar Idioma" onclick="toggleLanguage()">
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"></path></svg>
+        <span id="lang-label" class="text-xs font-semibold">ES</span>
+      </button>
+
+      <!-- Sound Effects Toggle Button -->
+      <button id="sound-toggle-btn" type="button" class="h-9 w-9 rounded-lg flex items-center justify-center transition-colors hover:bg-foreground/5 outline-none focus-visible:ring-2 focus-visible:ring-primary relative" title="Sonido activado (clic para silenciar)" onclick="SoundSystem.toggleMute()">
+        <span id="sound-icon-wrap" class="flex items-center justify-center">
+          <svg id="sound-icon-on" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-volume-2 text-foreground/80"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path><path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path></svg>
+          <svg id="sound-icon-off" style="display: none;" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-volume-x text-rose-400"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><line x1="22" x2="16" y1="9" y2="15"></line><line x1="16" x2="22" y1="9" y2="15"></line></svg>
+        </span>
+      </button>
+
+      <!-- Settings Cog -->
+      <button type="button" class="h-9 w-9 rounded-lg flex items-center justify-center transition-colors hover:bg-foreground/5 outline-none focus-visible:ring-2 focus-visible:ring-primary" title="Configuración" onclick="openWindow('settings')">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-settings size-4"><path d="M9.671 4.136a2.34 2.34 0 0 1 4.659 0 2.34 2.34 0 0 0 3.319 1.915 2.34 2.34 0 0 1 2.33 4.033 2.34 2.34 0 0 0 0 3.831 2.34 2.34 0 0 1-2.33 4.033 2.34 2.34 0 0 0-3.319 1.915 2.34 2.34 0 0 1-4.659 0 2.34 2.34 0 0 0-3.32-1.915 2.34 2.34 0 0 1-2.33-4.033 2.34 2.34 0 0 0 0-3.831A2.34 2.34 0 0 1 6.35 6.051a2.34 2.34 0 0 0 3.319-1.915"></path><circle cx="12" cy="12" r="3"></circle></svg>
+      </button>
+
+      <!-- Live Clock & Date -->
+      <button type="button" class="flex flex-col items-end rounded-lg px-2 text-xs leading-tight hover:bg-foreground/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary">
+        <span id="tray-time" class="font-medium">11:06 PM</span>
+        <span id="tray-date" class="text-3xs opacity-70">Oct 1, 2026</span>
+      </button>
+    </div>
+
+  </div>
+
+  <!-- ==================== MODAL: PHONE QR ==================== -->
+  <div id="modal-phone" class="modal-overlay" onclick="if(event.target===this)closeModal('modal-phone')">
+    <div class="modal-card">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+        <h3 id="modal-phone-title" style="margin: 0; font-size: 1.1rem; color: #fff;">Probalo en tu celular</h3>
+        <button onclick="closeModal('modal-phone')" style="background: transparent; border: none; color: #fff; cursor: pointer; font-size: 1.2rem;">✕</button>
+      </div>
+      <p id="modal-phone-desc" style="font-size: 0.85rem; color: rgba(255,255,255,0.7); line-height: 1.5; margin-bottom: 1.25rem;">
+        Escaneá el código QR con la cámara de tu celular para abrir este portfolio como una Web App nativa.
+      </p>
+      <div style="background: #fff; padding: 1.25rem; border-radius: 0.85rem; width: fit-content; margin: 0 auto 1.25rem auto;">
+        <!-- Clean QR SVG Representation -->
+        <svg width="160" height="160" viewBox="0 0 100 100" fill="#000">
+          <rect width="30" height="30" x="5" y="5" />
+          <rect width="20" height="20" x="10" y="10" fill="#fff" />
+          <rect width="10" height="10" x="15" y="15" />
+          <rect width="30" height="30" x="65" y="5" />
+          <rect width="20" height="20" x="70" y="10" fill="#fff" />
+          <rect width="10" height="10" x="75" y="15" />
+          <rect width="30" height="30" x="5" y="65" />
+          <rect width="20" height="20" x="10" y="70" fill="#fff" />
+          <rect width="10" height="10" x="15" y="75" />
+          <rect width="10" height="10" x="45" y="15" />
+          <rect width="10" height="10" x="45" y="35" />
+          <rect width="10" height="10" x="45" y="55" />
+          <rect width="10" height="10" x="45" y="75" />
+          <rect width="10" height="10" x="25" y="45" />
+          <rect width="10" height="10" x="65" y="45" />
+          <rect width="10" height="10" x="80" y="65" />
+          <rect width="10" height="10" x="65" y="80" />
+        </svg>
+      </div>
+      <button id="modal-phone-btn" onclick="copyToClipboard(window.location.href, 'Enlace copiado'); closeModal('modal-phone');" style="width: 100%; padding: 0.65rem; background: var(--color-primary, #22d3c5); color: #04201d; border: none; border-radius: 0.5rem; font-weight: 700; cursor: pointer;">Copiar Enlace Web</button>
+    </div>
+  </div>
+
+  <!-- ==================== MODAL: SHARE ==================== -->
+  <div id="modal-share" class="modal-overlay" onclick="if(event.target===this)closeModal('modal-share')">
+    <div class="modal-card">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+        <h3 id="modal-share-title" style="margin: 0; font-size: 1.1rem; color: #fff;">🔗 Compartir Portfolio</h3>
+        <button onclick="closeModal('modal-share')" style="background: transparent; border: none; color: #fff; cursor: pointer; font-size: 1.2rem;">✕</button>
+      </div>
+      <p id="modal-share-desc" style="font-size: 0.85rem; color: rgba(255,255,255,0.7); line-height: 1.5; margin-bottom: 1.25rem;">
+        ¡Compartí el portfolio interactivo de Iván Pieretto con colegas, reclutadores o en tus redes sociales!
+      </p>
+      <div style="display: flex; gap: 0.5rem; margin-bottom: 1rem;">
+        <button id="modal-share-btn-copy" onclick="copyToClipboard(window.location.href, 'Enlace copiado')" style="flex: 1; padding: 0.65rem; background: var(--color-primary, #22d3c5); color: #04201d; border: none; border-radius: 0.5rem; font-weight: 700; cursor: pointer;">Copiar URL</button>
+        <button onclick="window.open('https://twitter.com/intent/tweet?text=Mira%20el%20Portfolio%20OS%20de%20Ivan%20Pieretto!&url=' + encodeURIComponent(window.location.href)); closeModal('modal-share');" style="padding: 0.65rem 1rem; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.15); border-radius: 0.5rem; color: #fff; font-size: 0.82rem; cursor: pointer;">Twitter</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== DESKTOP CONTEXT MENU ==================== -->
+  <div id="desktop-context-menu" class="context-menu" data-context-menu="true">
+    <button class="context-menu-item" data-ctx-id="refresh" onclick="refreshDesktop();">
+      <div class="context-menu-item-left">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+        <span>Actualizar</span>
+      </div>
+      <span class="context-menu-shortcut">F5</span>
+    </button>
+
+    <div class="context-menu-divider"></div>
+
+    <button class="context-menu-item" data-ctx-id="close-all" onclick="closeAllWindows(); closeContextMenu();">
+      <div class="context-menu-item-left">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#f87171" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        <span style="color: #fca5a5; font-weight: 500;">Cerrar todas las ventanas</span>
+      </div>
+      <span class="context-menu-shortcut">Alt+W</span>
+    </button>
+    <button class="context-menu-item" data-ctx-id="minimize-all" onclick="minimizeAllWindows(); closeContextMenu();">
+      <div class="context-menu-item-left">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+        <span>Minimizar todo al Dock</span>
+      </div>
+    </button>
+    <div class="context-menu-divider"></div>
+
+    <div class="context-menu-item has-submenu" data-ctx-id="wallpaper">
+      <div class="context-menu-item-left">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+        <span>Cambiar fondo</span>
+      </div>
+      <span style="font-size: 0.9rem; opacity: 0.6;">›</span>
+
+      <!-- Submenu of all wallpapers -->
+      <div class="context-submenu">
+        <button class="context-menu-item" onclick="setWallpaper('starlight'); closeContextMenu();">
+          <div class="context-menu-item-left">
+            <span style="font-size: 1rem;">✨</span>
+            <span>Estrellas Soft (Chill)</span>
+          </div>
+        </button>
+        <button class="context-menu-item" onclick="setWallpaper('sunset-calm'); closeContextMenu();">
+          <div class="context-menu-item-left">
+            <span style="font-size: 1rem;">🌅</span>
+            <span>Atardecer Calmo (Zen)</span>
+          </div>
+        </button>
+        <button class="context-menu-item" onclick="setWallpaper('velvet-aurora'); closeContextMenu();">
+          <div class="context-menu-item-left">
+            <span style="font-size: 1rem;">🌌</span>
+            <span>Aurora Velvet</span>
+          </div>
+        </button>
+        <button class="context-menu-item" onclick="setWallpaper('midnight-sonoma'); closeContextMenu();">
+          <div class="context-menu-item-left">
+            <span style="font-size: 1rem;">🟣</span>
+            <span>Sonoma Midnight</span>
+          </div>
+        </button>
+        <button class="context-menu-item" onclick="setWallpaper('dusk-pastels'); closeContextMenu();">
+          <div class="context-menu-item-left">
+            <span style="font-size: 1rem;">🌆</span>
+            <span>Crepúsculo Pastel</span>
+          </div>
+        </button>
+        <button class="context-menu-item" onclick="setWallpaper('emerald-deep'); closeContextMenu();">
+          <div class="context-menu-item-left">
+            <span style="font-size: 1rem;">🍃</span>
+            <span>Esmeralda Deep</span>
+          </div>
+        </button>
+        <button class="context-menu-item" onclick="setWallpaper('nordic-mist'); closeContextMenu();">
+          <div class="context-menu-item-left">
+            <span style="font-size: 1rem;">🌫️</span>
+            <span>Niebla Nórdica (Chill)</span>
+          </div>
+        </button>
+        <button class="context-menu-item" onclick="setWallpaper('quiet-forest'); closeContextMenu();">
+          <div class="context-menu-item-left">
+            <span style="font-size: 1rem;">🌲</span>
+            <span>Bosque Serena (Chill)</span>
+          </div>
+        </button>
+        <button class="context-menu-item" onclick="setWallpaper('cozy-mocha'); closeContextMenu();">
+          <div class="context-menu-item-left">
+            <span style="font-size: 1rem;">☕</span>
+            <span>Café & Moca (Cálido)</span>
+          </div>
+        </button>
+        <button class="context-menu-item" onclick="setWallpaper('solid-dark'); closeContextMenu();">
+          <div class="context-menu-item-left">
+            <span style="font-size: 1rem;">⬛</span>
+            <span>Pure Dark (OLED)</span>
+          </div>
+        </button>
+        <button class="context-menu-item" onclick="setWallpaper('solid-light'); closeContextMenu();">
+          <div class="context-menu-item-left">
+            <span style="font-size: 1rem;">💡</span>
+            <span>Pure Light</span>
+          </div>
+        </button>
+        <button class="context-menu-item" onclick="setWallpaper('nebula'); closeContextMenu();">
+          <div class="context-menu-item-left">
+            <span style="font-size: 1rem;">🌠</span>
+            <span>Nebula Serena</span>
+          </div>
+        </button>
+        <button class="context-menu-item" onclick="setWallpaper('horizon'); closeContextMenu();">
+          <div class="context-menu-item-left">
+            <span style="font-size: 1rem;">🌄</span>
+            <span>Horizonte</span>
+          </div>
+        </button>
+        <div class="context-menu-divider"></div>
+        <button class="context-menu-item" onclick="showModal('modal-wallpapers'); closeContextMenu();">
+          <div class="context-menu-item-left">
+            <span style="font-size: 0.9rem;">🖼️</span>
+            <span>Más fondos…</span>
+          </div>
+        </button>
+      </div>
+    </div>
+
+    <!-- Submenu of Accent Colors -->
+    <div class="context-menu-item has-submenu" data-ctx-id="accent">
+      <div class="context-menu-item-left">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="m4.93 4.93 4.24 4.24"></path><path d="m14.83 9.17 4.24-4.24"></path><path d="m14.83 14.83 4.24 4.24"></path><path d="m9.17 14.83-4.24 4.24"></path></svg>
+        <span>Color de acento</span>
+      </div>
+      <span style="font-size: 0.9rem; opacity: 0.6;">›</span>
+
+      <div class="context-submenu">
+        <button class="context-menu-item" onclick="setAccent('cyan'); closeContextMenu();">
+          <div class="context-menu-item-left">
+            <span style="display:inline-block;width:12px;height:12px;border-radius:50%;background:#22d3c5;"></span>
+            <span>Cyan Neón</span>
+          </div>
+        </button>
+        <button class="context-menu-item" onclick="setAccent('blue'); closeContextMenu();">
+          <div class="context-menu-item-left">
+            <span style="display:inline-block;width:12px;height:12px;border-radius:50%;background:#38bdf8;"></span>
+            <span>Azul Eléctrico</span>
+          </div>
+        </button>
+        <button class="context-menu-item" onclick="setAccent('purple'); closeContextMenu();">
+          <div class="context-menu-item-left">
+            <span style="display:inline-block;width:12px;height:12px;border-radius:50%;background:#a855f7;"></span>
+            <span>Púrpura Deep</span>
+          </div>
+        </button>
+        <button class="context-menu-item" onclick="setAccent('emerald'); closeContextMenu();">
+          <div class="context-menu-item-left">
+            <span style="display:inline-block;width:12px;height:12px;border-radius:50%;background:#10b981;"></span>
+            <span>Esmeralda Mint</span>
+          </div>
+        </button>
+        <button class="context-menu-item" onclick="setAccent('rose'); closeContextMenu();">
+          <div class="context-menu-item-left">
+            <span style="display:inline-block;width:12px;height:12px;border-radius:50%;background:#f43f5e;"></span>
+            <span>Rosa Sunset</span>
+          </div>
+        </button>
+      </div>
+    </div>
+
+    <button class="context-menu-item" data-ctx-id="arrange" onclick="arrangeIcons(); closeContextMenu();">
+      <div class="context-menu-item-left">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+        <span>Ordenar íconos</span>
+      </div>
+    </button>
+
+    <div class="context-menu-divider"></div>
+
+    <button class="context-menu-item" data-ctx-id="terminal" onclick="openWindow('terminal'); closeContextMenu();">
+      <div class="context-menu-item-left">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 17 10 11 4 5"></polyline><line x1="12" y1="19" x2="20" y2="19"></line></svg>
+        <span>Abrir terminal</span>
+      </div>
+    </button>
+
+    <button class="context-menu-item" data-ctx-id="search" onclick="toggleStartMenu(); closeContextMenu();">
+      <div class="context-menu-item-left">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+        <span>Buscar…</span>
+      </div>
+      <span class="context-menu-shortcut">Ctrl+K</span>
+    </button>
+
+    <button class="context-menu-item" data-ctx-id="settings" onclick="openWindow('settings'); closeContextMenu();">
+      <div class="context-menu-item-left">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+        <span>Personalizar OS…</span>
+      </div>
+    </button>
+
+    <div class="context-menu-divider"></div>
+
+    <button class="context-menu-item" data-ctx-id="lock" onclick="lockScreen(); closeContextMenu();">
+      <div class="context-menu-item-left">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+        <span>Bloquear pantalla</span>
+      </div>
+    </button>
+  </div>
+
+  <!-- ==================== MODAL: WALLPAPERS GALLERY ==================== -->
+  <div id="modal-wallpapers" class="modal-overlay" onclick="if(event.target===this)closeModal('modal-wallpapers')">
+    <div class="modal-card" style="max-width: 660px; max-height: 85vh; overflow-y: auto;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+        <h3 style="margin: 0; font-size: 1.15rem; color: #fff;">🖼️ Fondos de Pantalla</h3>
+        <button onclick="closeModal('modal-wallpapers')" style="background: transparent; border: none; color: #fff; cursor: pointer; font-size: 1.2rem;">✕</button>
+      </div>
+      <p style="font-size: 0.82rem; color: rgba(255,255,255,0.65); line-height: 1.4; margin: 0;">
+        Fondos relajantes, minimalistas y atmosféricos seleccionados para descansar la vista.
+      </p>
+
+      <div class="wallpaper-grid-cards">
+        <!-- Sunset Calm (Default) -->
+        <div class="wallpaper-card active" onclick="setWallpaper('sunset-calm'); updateWallpaperActive(this);">
+          <div class="wallpaper-preview-thumb" style="background: linear-gradient(160deg, #0e0c19 0%, #1c142b 35%, #2a192c 70%, #3a1e26 100%);">
+            <span style="position: absolute; bottom: 4px; right: 4px; font-size: 0.6rem; background: rgba(244,63,94,0.3); color: #fda4af; padding: 1px 4px; border-radius: 3px;">Zen</span>
+          </div>
+          <div class="wallpaper-label-title">Atardecer Calmo</div>
+        </div>
+
+        <!-- Nordic Mist -->
+        <div class="wallpaper-card" onclick="setWallpaper('nordic-mist'); updateWallpaperActive(this);">
+          <div class="wallpaper-preview-thumb" style="background: linear-gradient(135deg, #0c1017 0%, #151b24 50%, #1e2634 100%);">
+            <span style="position: absolute; bottom: 4px; right: 4px; font-size: 0.6rem; background: rgba(56,189,248,0.25); color: #7dd3fc; padding: 1px 4px; border-radius: 3px;">Chill</span>
+          </div>
+          <div class="wallpaper-label-title">Niebla Nórdica</div>
+        </div>
+
+        <!-- Quiet Forest -->
+        <div class="wallpaper-card" onclick="setWallpaper('quiet-forest'); updateWallpaperActive(this);">
+          <div class="wallpaper-preview-thumb" style="background: radial-gradient(ellipse at 50% 40%, #0c1e16 0%, #07130e 55%, #030806 100%);">
+            <span style="position: absolute; bottom: 4px; right: 4px; font-size: 0.6rem; background: rgba(34,197,94,0.25); color: #86efac; padding: 1px 4px; border-radius: 3px;">Relax</span>
+          </div>
+          <div class="wallpaper-label-title">Bosque Serena</div>
+        </div>
+
+        <!-- Cozy Mocha -->
+        <div class="wallpaper-card" onclick="setWallpaper('cozy-mocha'); updateWallpaperActive(this);">
+          <div class="wallpaper-preview-thumb" style="background: linear-gradient(145deg, #110d0c 0%, #1b1413 50%, #261b19 100%);">
+            <span style="position: absolute; bottom: 4px; right: 4px; font-size: 0.6rem; background: rgba(217,119,6,0.25); color: #fcd34d; padding: 1px 4px; border-radius: 3px;">Cálido</span>
+          </div>
+          <div class="wallpaper-label-title">Café & Moca</div>
+        </div>
+
+        <!-- Lavender Dusk -->
+        <div class="wallpaper-card" onclick="setWallpaper('lavender-dusk'); updateWallpaperActive(this);">
+          <div class="wallpaper-preview-thumb" style="background: radial-gradient(ellipse at bottom, #1d1738 0%, #120f24 50%, #090814 100%);"></div>
+          <div class="wallpaper-label-title">Crepúsculo Lavanda</div>
+        </div>
+
+        <!-- Pure Dark -->
+        <div class="wallpaper-card" onclick="setWallpaper('solid-dark'); updateWallpaperActive(this);">
+          <div class="wallpaper-preview-thumb" style="background: #050608;"></div>
+          <div class="wallpaper-label-title">Pure Dark (OLED)</div>
+        </div>
+
+        <!-- Pure Light -->
+        <div class="wallpaper-card" onclick="setWallpaper('solid-light'); updateWallpaperActive(this);">
+          <div class="wallpaper-preview-thumb" style="background: linear-gradient(135deg, #f1f5f9 0%, #cbd5e1 100%);"></div>
+          <div class="wallpaper-label-title">Pure Light</div>
+        </div>
+
+        <!-- Nebula -->
+        <div class="wallpaper-card" onclick="setWallpaper('nebula'); updateWallpaperActive(this);">
+          <div class="wallpaper-preview-thumb" style="background: radial-gradient(1px 1px at 20% 30%, rgba(255,255,255,0.6), transparent), radial-gradient(100% 100% at 30% 20%, color-mix(in srgb, var(--color-primary, #22d3c5) 25%, #03060a), #03060a);"></div>
+          <div class="wallpaper-label-title">Nebula Serena</div>
+        </div>
+
+        <!-- Horizonte -->
+        <div class="wallpaper-card" onclick="setWallpaper('horizon'); updateWallpaperActive(this);">
+          <div class="wallpaper-preview-thumb" style="background: linear-gradient(180deg, #03060a 0%, color-mix(in srgb, var(--color-primary, #22d3c5) 30%, #03060a) 100%);"></div>
+          <div class="wallpaper-label-title">Horizonte</div>
+        </div>
+
+        <!-- Dark Matter -->
+        <div class="wallpaper-card" onclick="setWallpaper('gradient-dark'); updateWallpaperActive(this);">
+          <div class="wallpaper-preview-thumb" style="background: radial-gradient(ellipse at bottom, #0f172a 0%, #030508 100%);"></div>
+          <div class="wallpaper-label-title">Dark Matter</div>
+        </div>
+
+        <!-- Estrellas Soft (Chill / Zen) -->
+        <div class="wallpaper-card" onclick="setWallpaper('starlight'); updateWallpaperActive(this);">
+          <div class="wallpaper-preview-thumb" style="background: radial-gradient(circle at 50% 60%, rgba(38,28,74,0.3) 0%, #03050c 100%); display: flex; align-items: center; justify-content: center; overflow: hidden; position: relative;">
+            <div style="font-size: 1.4rem; opacity: 0.9;">✨</div>
+            <span style="position: absolute; bottom: 4px; right: 4px; font-size: 0.6rem; background: rgba(34,211,197,0.25); color: #22d3c5; padding: 1px 4px; border-radius: 3px;">Animado · Soft</span>
+          </div>
+          <div class="wallpaper-label-title">Estrellas Soft (Chill)</div>
+        </div>
+
+        <!-- Aurora Velvet -->
+        <div class="wallpaper-card" onclick="setWallpaper('velvet-aurora'); updateWallpaperActive(this);">
+          <div class="wallpaper-preview-thumb" style="background: radial-gradient(ellipse at 25% 15%, rgba(34,211,197,0.35) 0%, transparent 55%), radial-gradient(ellipse at 80% 30%, rgba(99,102,241,0.35) 0%, transparent 60%), linear-gradient(145deg, #020409 0%, #06111a 45%, #0b152d 100%);">
+            <span style="position: absolute; bottom: 4px; right: 4px; font-size: 0.6rem; background: rgba(34,211,197,0.25); color: #22d3c5; padding: 1px 4px; border-radius: 3px;">Aesthetic</span>
+          </div>
+          <div class="wallpaper-label-title">Aurora Velvet</div>
+        </div>
+
+        <!-- Sonoma Midnight -->
+        <div class="wallpaper-card" onclick="setWallpaper('midnight-sonoma'); updateWallpaperActive(this);">
+          <div class="wallpaper-preview-thumb" style="background: radial-gradient(circle at 80% 25%, rgba(168,85,247,0.35) 0%, transparent 50%), radial-gradient(circle at 20% 80%, rgba(244,63,94,0.3) 0%, transparent 50%), linear-gradient(160deg, #05060d 0%, #0c0f1d 50%, #17182e 100%);">
+            <span style="position: absolute; bottom: 4px; right: 4px; font-size: 0.6rem; background: rgba(168,85,247,0.25); color: #c084fc; padding: 1px 4px; border-radius: 3px;">macOS</span>
+          </div>
+          <div class="wallpaper-label-title">Sonoma Midnight</div>
+        </div>
+
+        <!-- Crepúsculo Pastel -->
+        <div class="wallpaper-card" onclick="setWallpaper('dusk-pastels'); updateWallpaperActive(this);">
+          <div class="wallpaper-preview-thumb" style="background: linear-gradient(175deg, #070913 0%, #131428 40%, #29182d 75%, #3d212b 100%);">
+            <span style="position: absolute; bottom: 4px; right: 4px; font-size: 0.6rem; background: rgba(244,63,94,0.25); color: #fda4af; padding: 1px 4px; border-radius: 3px;">Calm</span>
+          </div>
+          <div class="wallpaper-label-title">Crepúsculo Pastel</div>
+        </div>
+
+        <!-- Esmeralda Deep -->
+        <div class="wallpaper-card" onclick="setWallpaper('emerald-deep'); updateWallpaperActive(this);">
+          <div class="wallpaper-preview-thumb" style="background: radial-gradient(ellipse at 50% 95%, rgba(16,185,129,0.35) 0%, rgba(6,44,30,0.55) 45%, #010805 100%);">
+            <span style="position: absolute; bottom: 4px; right: 4px; font-size: 0.6rem; background: rgba(16,185,129,0.25); color: #34d399; padding: 1px 4px; border-radius: 3px;">Sereno</span>
+          </div>
+          <div class="wallpaper-label-title">Esmeralda Deep</div>
+        </div>
+
+        <!-- Mountain Terrain -->
+        <div class="wallpaper-card" onclick="setWallpaper('mountain-terrain'); updateWallpaperActive(this);">
+          <div class="wallpaper-preview-thumb" style="background: linear-gradient(180deg, #0a0e17 0%, #151e2e 60%, #1e293b 100%); position: relative; overflow: hidden;">
+            <svg viewBox="0 0 100 50" style="position: absolute; bottom: 0; width: 100%; height: 50%; opacity: 0.85;" preserveAspectRatio="none">
+              <polygon points="0,50 25,20 45,35 70,10 85,25 100,50" fill="#070b12" />
+            </svg>
+          </div>
+          <div class="wallpaper-label-title">Mountain Terrain</div>
+        </div>
+
+        <!-- Cosmic Photo -->
+        <div class="wallpaper-card" onclick="setWallpaper('photo-space'); updateWallpaperActive(this);">
+          <div class="wallpaper-preview-thumb" style="background: url('wallpaper.jpg') center/cover no-repeat;"></div>
+          <div class="wallpaper-label-title">Deep Space</div>
+        </div>
+
+        <!-- Cyber City Photo -->
+        <div class="wallpaper-card" onclick="setWallpaper('photo-cyber'); updateWallpaperActive(this);">
+          <div class="wallpaper-preview-thumb" style="background: url('wallpaper2.jpg') center/cover no-repeat;"></div>
+          <div class="wallpaper-label-title">Cyber City</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== SPOTLIGHT SEARCH OVERLAY (CMD+K / CTRL+K) ==================== -->
+  <div id="spotlight-overlay" class="spotlight-overlay" onclick="if(event.target===this)closeSpotlight()">
+    <div class="spotlight-card" onclick="event.stopPropagation()">
+      <div class="spotlight-header">
+        <svg class="spotlight-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+        <input id="spotlight-input" type="text" class="spotlight-input" placeholder="Buscar apps, proyectos, habilidades o comandos…" autocomplete="off" spellcheck="false" />
+        <span class="spotlight-badge">ESC para salir</span>
+      </div>
+      <div id="spotlight-results" class="spotlight-results">
+        <!-- Results rendered by JS -->
+      </div>
+      <div class="spotlight-footer">
+        <div class="spotlight-keys">
+          <span><kbd>↑</kbd> <kbd>↓</kbd> Navegar</span>
+          <span><kbd>↵</kbd> Abrir</span>
+          <span><kbd>esc</kbd> Cerrar</span>
+        </div>
+        <div>
+          <span style="color: var(--color-primary, #22d3c5); font-weight: 600;">Spotlight OS</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== MODAL: RECRUITER 1-CLICK SUMMARY ==================== -->
+  <div id="modal-recruiter" class="modal-overlay" onclick="if(event.target===this)closeModal('modal-recruiter')">
+    <div class="modal-card" style="max-width: 640px;">
+      <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem;">
+        <div>
+          <div style="display: flex; align-items: center; gap: 0.5rem;">
+            <span style="font-size: 1.4rem;">⚡</span>
+            <h3 id="recruiter-title" style="margin: 0; font-size: 1.2rem; color: #fff;">Resumen para Reclutadores</h3>
+          </div>
+          <p id="recruiter-sub" style="margin: 0.25rem 0 0 0; font-size: 0.8rem; color: rgba(255,255,255,0.65);">
+            Toda la información clave de Iván Pieretto en 30 segundos.
+          </p>
+        </div>
+        <button onclick="closeModal('modal-recruiter')" style="background: transparent; border: none; color: #fff; cursor: pointer; font-size: 1.3rem;">✕</button>
+      </div>
+
+      <!-- Recruiter Hero Card -->
+      <div class="recruiter-hero">
+        <div class="about-avatar" style="width: 3.8rem; height: 3.8rem; font-size: 1.4rem; border-radius: 1rem; flex-shrink: 0;">IP</div>
+        <div style="flex: 1; min-width: 0;">
+          <h4 style="margin: 0; font-size: 1.05rem; color: #ffffff;">Iván Pieretto</h4>
+          <div id="recruiter-role" style="font-size: 0.82rem; color: var(--color-primary, #22d3c5); font-weight: 600;">
+            Desarrollador de Software · Full-Stack & Python / Backend
+          </div>
+          <div id="recruiter-location" style="font-size: 0.75rem; color: rgba(255,255,255,0.7); margin-top: 0.2rem;">
+            📍 Rosario, Santa Fe, Argentina · Modalidad Remota / Híbrida / Presencial
+          </div>
+          <div class="recruiter-badge">
+            <span class="recruiter-badge-dot"></span>
+            <span id="recruiter-badge-text">Disponible para incorporación inmediata</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Highlights Grid -->
+      <div class="recruiter-grid">
+        <div class="recruiter-card">
+          <div id="recruiter-projects-title" class="recruiter-card-title">🚀 Proyectos Clave</div>
+          <div id="recruiter-projects-body" class="recruiter-card-body">
+            • <b>adaptIA:</b> Plataforma SaaS con IA, microservicios y arquitectura multi-tenant.<br>
+            • <b>Estudio el Oso:</b> Plataforma de producción y streaming de audio con UI hiper-reactiva.<br>
+            • <b>Chappie-bot:</b> Automatización con IA y bots de mensajería empresarial.
+          </div>
+        </div>
+        <div class="recruiter-card">
+          <div id="recruiter-stack-title" class="recruiter-card-title"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:inline-block;vertical-align:-2px;margin-right:5px;"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>Stack Principal</div>
+          <div class="recruiter-card-body" style="display: flex; flex-wrap: wrap; gap: 0.35rem; margin-top: 0.4rem;">
+            <span style="background: rgba(34,211,197,0.15); color: #22d3c5; border: 1px solid rgba(34,211,197,0.3); border-radius: 0.35rem; padding: 0.2rem 0.45rem; font-size: 0.72rem; font-weight: 600;">Python</span>
+            <span style="background: rgba(34,211,197,0.15); color: #22d3c5; border: 1px solid rgba(34,211,197,0.3); border-radius: 0.35rem; padding: 0.2rem 0.45rem; font-size: 0.72rem; font-weight: 600;">FastAPI</span>
+            <span style="background: rgba(56,189,248,0.15); color: #38bdf8; border: 1px solid rgba(56,189,248,0.3); border-radius: 0.35rem; padding: 0.2rem 0.45rem; font-size: 0.72rem; font-weight: 600;">Docker</span>
+            <span style="background: rgba(99,102,241,0.15); color: #818cf8; border: 1px solid rgba(99,102,241,0.3); border-radius: 0.35rem; padding: 0.2rem 0.45rem; font-size: 0.72rem; font-weight: 600;">PostgreSQL</span>
+            <span style="background: rgba(168,85,247,0.15); color: #c084fc; border: 1px solid rgba(168,85,247,0.3); border-radius: 0.35rem; padding: 0.2rem 0.45rem; font-size: 0.72rem; font-weight: 600;">TypeScript</span>
+            <span style="background: rgba(56,189,248,0.15); color: #38bdf8; border: 1px solid rgba(56,189,248,0.3); border-radius: 0.35rem; padding: 0.2rem 0.45rem; font-size: 0.72rem; font-weight: 600;">React</span>
+            <span style="background: rgba(244,63,94,0.15); color: #fda4af; border: 1px solid rgba(244,63,94,0.3); border-radius: 0.35rem; padding: 0.2rem 0.45rem; font-size: 0.72rem; font-weight: 600;">Git / CI-CD</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Actions for HR -->
+      <div class="recruiter-actions">
+        <a id="recruiter-btn-download-cv" href="Ivan_Pieretto_CV.pdf" target="_blank" download class="recruiter-btn-primary">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+          <span>Descargar CV (PDF)</span>
+        </a>
+        <a id="recruiter-btn-whatsapp" href="https://wa.me/5493413554160?text=Hola%20Iv%C3%A1n,%20vi%20tu%20Portfolio%20OS%20y%20me%20gustar%C3%ADa%20conversar%20sobre%20una%20oportunidad%20laboral." target="_blank" class="recruiter-btn-secondary" style="border-color: rgba(37,211,102,0.4); color: #4ade80;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+          <span>WhatsApp Directo</span>
+        </a>
+        <button id="recruiter-btn-copy-email" onclick="copyToClipboard('pierettoivan2004@gmail.com', 'Email copiado: pierettoivan2004@gmail.com'); closeModal('modal-recruiter');" class="recruiter-btn-secondary">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+          <span>Copiar Email</span>
+        </button>
+        <button id="recruiter-btn-view-projects" onclick="openWindow('projects'); closeModal('modal-recruiter');" class="recruiter-btn-secondary">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:inline-block;vertical-align:-2px;margin-right:5px;"><path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/></svg><span>Ver Proyectos</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Message Element -->
+  <div id="toast-msg" class="toast-msg"></div>
+
+  <!-- JavaScript Bundle -->
+  <script src="gsap.min.js"></script>
+  <script src="app.js"></script>
+  <script src="terminal-easter-eggs.js"></script>
+  <script>
+    function switchAboutTab(btn, tabId) {
+      if (window.SoundSystem) SoundSystem.play('click');
+      document.querySelectorAll('.about-tab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.about-tab-pane').forEach(p => p.style.display = 'none');
+      btn.classList.add('active');
+      const target = document.getElementById(tabId);
+      if (target) target.style.display = 'block';
+    }
+  </script>
+</body>
+</html>
