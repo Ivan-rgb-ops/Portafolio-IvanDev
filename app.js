@@ -503,7 +503,8 @@ function finishBoot() {
         scale: 0.9,
         stagger: 0.035,
         duration: 0.45,
-        ease: "back.out(1.2)"
+        ease: "back.out(1.2)",
+        clearProps: "opacity,y,scale"
       });
       // Slide dock and tray in
       gsap.from('#taskbar-nav, [aria-label="System tray"]', {
@@ -1146,11 +1147,20 @@ function initDesktopIcons() {
       prevValidY = currentY;
       icon.dataset.posX = currentX;
       icon.dataset.posY = currentY;
-      icon.style.transform = `translate3d(${currentX}px, ${currentY}px, 0)`;
+      if (currentX !== 0 || currentY !== 0) {
+        icon.style.transform = `translate3d(${currentX}px, ${currentY}px, 0)`;
+      }
     } else {
       icon.dataset.posX = '0';
       icon.dataset.posY = '0';
     }
+
+    icon.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        if (origin) openWindow(origin);
+      }
+    });
 
     icon.addEventListener('pointerdown', (e) => {
       if (e.button !== 0) return;
@@ -1258,7 +1268,11 @@ function initDesktopIcons() {
         } else {
           // Normal click without movement -> Open app
           icon.style.zIndex = '20';
-          icon.style.transform = `translate3d(${currentX}px, ${currentY}px, 0)`;
+          if (currentX !== 0 || currentY !== 0) {
+            icon.style.transform = `translate3d(${currentX}px, ${currentY}px, 0)`;
+          } else {
+            icon.style.transform = '';
+          }
           if (origin) openWindow(origin);
         }
       }
@@ -3015,9 +3029,19 @@ function arrangeIcons() {
     icon.dataset.posX = '0';
     icon.dataset.posY = '0';
     if (window.gsap) {
-      gsap.to(icon, { x: 0, y: 0, scale: 1, rotation: 0, duration: 0.35, ease: "back.out(1.2)" });
+      gsap.to(icon, {
+        x: 0,
+        y: 0,
+        scale: 1,
+        rotation: 0,
+        duration: 0.35,
+        ease: "back.out(1.2)",
+        onComplete: () => {
+          icon.style.transform = '';
+        }
+      });
     } else {
-      icon.style.transform = 'translate3d(0, 0, 0)';
+      icon.style.transform = '';
     }
   });
 
