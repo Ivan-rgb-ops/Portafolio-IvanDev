@@ -10,8 +10,11 @@ export const apps = {
   recycle: { title:'Papelera de reciclaje', label:'Papelera de reciclaje', width:760, height:480 },
   recruiter: { title:'Resumen para reclutadores', label:'Para reclutadores', width:800, height:590, keywords:'reclutador recruiter contratar resumen ejecutivo' },
   doom: { title:'DOOM · DOS', label:'DOOM', width:800, height:600 },
+  taskmanager: {title:'Administrador de tareas',label:'Administrador de tareas',width:850,height:550,keywords:'procesos apps tareas cerrar'},
+  shortcuts: {title:'Atajos de teclado',label:'Atajos de teclado',width:960,height:680,keywords:'ayuda teclado windows combinaciones'},
+  system: {title:'Acerca de Portfolio OS',label:'Acerca del sistema',width:630,height:480,keywords:'winver version windows sistema'},
 };
-export const pinned = ['explorer','about','projects','resume','contact','terminal','chat','settings','recruiter'];
+export const pinned = ['explorer','about','projects','resume','contact','terminal','chat','settings','recruiter','shortcuts','taskmanager','system'];
 export const taskbarPinned = ['explorer','projects','terminal','contact'];
 export const storage = {
   get(key, fallback) { try { return JSON.parse(localStorage.getItem(`ivanos:${key}`)) ?? fallback; } catch { return fallback; } },

@@ -1,12 +1,13 @@
 import {storage,apps} from './config.js';
 import {appIcon} from './icons.js';
+import {desktopShortcuts as shortcuts,deletedShortcuts,shortcutLabel} from './desktop-state.js';
+import {escapeHTML} from './settings.js';
 
-const shortcuts=['recycle','explorer','about','projects','resume','contact','terminal'];
 export function renderDesktop(container,open) {
   const saved=storage.get('desktop-order',shortcuts);
-  const order=[...new Set([...(Array.isArray(saved)?saved:[]),...shortcuts])].filter(id=>shortcuts.includes(id));
+  const order=[...new Set([...(Array.isArray(saved)?saved:[]),...shortcuts])].filter(id=>shortcuts.includes(id)&&!deletedShortcuts().includes(id));
   let suppressUntil=0;
-  container.innerHTML=order.map(id=>`<button class="desktop-icon" data-desktop-app="${id}" aria-label="${apps[id].label}" title="Doble clic para abrir">${appIcon(id)}<span>${apps[id].label}</span>${id==='recycle'?'':'<span class="shortcut-arrow" aria-hidden="true">↗</span>'}</button>`).join('');
+  container.innerHTML=order.map(id=>`<button class="desktop-icon" data-desktop-app="${id}" aria-label="${escapeHTML(shortcutLabel(id))}" title="Doble clic para abrir">${appIcon(id)}<span>${escapeHTML(shortcutLabel(id))}</span>${id==='recycle'?'':'<span class="shortcut-arrow" aria-hidden="true">↗</span>'}</button>`).join('');
   container.querySelectorAll('button').forEach(button=>{
     button.addEventListener('dblclick',()=>{if(performance.now()>suppressUntil)open(button.dataset.desktopApp);});
     button.addEventListener('click',event=>{

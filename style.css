@@ -398,3 +398,184 @@ select {background:var(--canvas);border:1px solid var(--border);padding:6px 10px
 }
 @media(prefers-reduced-motion:reduce) {*,*:before,*:after {animation:none!important;transition:none!important;scroll-behavior:auto!important}}
 :root[data-motion='off'] *,:root[data-motion='off'] *:before,:root[data-motion='off'] *:after {animation:none!important;transition:none!important}
+
+/* Windows session, personalization and desktop controls */
+#desktop {background-size:var(--wallpaper-fit,cover);background-repeat:no-repeat;background-color:#12213b}
+.desktop-icons {--desktop-cell:86px;--desktop-art:46px;grid-template-rows:repeat(auto-fill,var(--desktop-cell));grid-auto-columns:82px}
+.desktop-icon {height:var(--desktop-cell);min-height:0}
+.desktop-icon>.app-icon {width:var(--desktop-art);height:var(--desktop-art)}
+[data-icon-size='small'] .desktop-icons {--desktop-cell:68px;--desktop-art:32px;grid-auto-columns:76px;gap:5px}
+[data-icon-size='large'] .desktop-icons {--desktop-cell:110px;--desktop-art:64px;grid-auto-columns:106px;gap:10px}
+[data-icon-size='small'] .shortcut-arrow {top:25px;left:15px}
+[data-icon-size='large'] .shortcut-arrow {top:52px;left:19px}
+[data-show-icons='false'] .desktop-icons {display:none}
+[data-show-search='false'] .taskbar-search {display:none}
+[data-alignment='left'] .taskbar-center {left:56px;transform:none}
+[data-alignment='left'] .taskbar-profile {visibility:hidden}
+[data-transparency='false'] .shell-panel {background:var(--surface);backdrop-filter:none}
+[data-transparency='false'] .taskbar {background:var(--mica);backdrop-filter:none}
+:root[data-contrast='true'] {--text:#000;--muted:#161616;--border:#333;--surface:#fff;--canvas:#fff;--mica:#fff;--panel:#fff;--taskbar:#fff}
+:root[data-contrast='true'][data-theme='dark'] {--text:#fff;--muted:#f5f5f5;--border:#ddd;--surface:#000;--canvas:#000;--mica:#000;--panel:#000;--taskbar:#000}
+[data-contrast='true'] .shell-panel {backdrop-filter:none;border-color:var(--text)}
+[data-contrast='true'] button:focus-visible {outline-width:3px}
+#lock-screen {padding:0;display:block;isolation:isolate;backdrop-filter:none;background-image:linear-gradient(#071a3710,#071a3738),var(--wallpaper);background-size:cover;background-position:center;overflow:auto}
+#lock-screen:before {content:'';position:absolute;inset:0;background:inherit;z-index:-1;transition:filter .45s,scale .45s}
+#lock-screen[data-phase='typing']:before,#lock-screen[data-phase='welcome']:before {filter:blur(22px) brightness(.66);scale:1.06}
+#unlock-button.lock-view {margin:0;padding:10vh 20px 70px;width:100%;min-height:100%;display:flex;flex-direction:column;align-items:center;gap:8px;border-radius:0;position:absolute;inset:0;color:white;background:transparent}
+#unlock-button.lock-view:hover {background:transparent}
+#lock-time {font-size:clamp(62px,8vw,100px);font-weight:600;line-height:1.05;letter-spacing:-3px;text-shadow:0 2px 20px #0002}
+#lock-date {font-size:19px;margin:8px 0;color:white;text-transform:capitalize}
+.lock-hint {margin-top:auto;display:flex;gap:8px;align-items:center;font-size:12px;opacity:.9}
+.lock-hint .icon {width:15px;height:15px}
+.login-view {position:absolute;inset:0;display:none;align-items:center;justify-content:center;padding:40px 20px 80px}
+.login-card {display:flex;flex-direction:column;align-items:center;width:330px;text-align:center;animation:login-in .4s ease-out;color:white}
+.login-card>.login-avatar {height:108px;width:108px;font-size:40px;background:linear-gradient(145deg,#81b1dc,#386a98);box-shadow:0 1px 4px #0002}
+.login-card h1 {font-size:26px;font-weight:500;margin:22px 0 25px}
+.login-password-wrap {width:290px;max-width:100%;display:flex;background:#ffffffeb;border:1px solid #fff8;border-bottom:2px solid #6db5ff;border-radius:4px;overflow:hidden;box-shadow:0 3px 15px #0002}
+.login-password-wrap input {background:none;flex:1;width:0;min-width:0;border:0;outline:none;color:#222;padding:11px 12px;font-size:16px;letter-spacing:3px;height:40px}
+.login-password-wrap input::placeholder {font-size:13px;letter-spacing:0;color:#666}
+.login-password-wrap button {width:40px;color:#333;display:grid;place-items:center;background:#e3e8ed}
+.login-password-wrap button:hover {background:#ccd9e7}
+.login-progress {display:flex;align-items:center;justify-content:center;gap:10px;min-height:40px;margin:14px 0 0;font-size:13px}
+.windows-spinner {width:18px;height:18px;border:2px dotted #fff;border-right-color:transparent;border-radius:50%;animation:login-spin 1s linear infinite}
+.login-description {font-size:11px;color:#ffffffe0;margin:5px 0 12px}
+#login-skip {color:white;font-size:12px;padding:7px 15px;border:1px solid #ffffff50;border-radius:3px;background:#ffffff10}
+#login-skip:hover {background:#ffffff25}
+#login-back {position:absolute;left:24px;top:24px;color:white}
+.login-system {position:absolute;bottom:22px;right:30px;display:flex;align-items:center;gap:16px;font-size:12px;color:white;z-index:2}
+.login-system .mini-menu {background:var(--surface);color:var(--text)}
+.login-system .icon-button {color:white}
+.login-system button[aria-pressed='true'] {background:#ffffff35}
+.power-off-view {display:none;min-height:100dvh;align-items:center;justify-content:center;flex-direction:column;gap:15px;background:#061225;color:white;text-align:center;padding:25px}
+.power-off-view>.icon {width:65px;height:65px;color:#68b8ff}
+.power-off-view h1 {font-weight:500;font-size:28px;margin:15px 0 0}
+.power-off-view p {font-size:13px;opacity:.8}
+#lock-screen[data-phase='typing'] .lock-view,#lock-screen[data-phase='welcome'] .lock-view,#lock-screen[data-phase='off'] .lock-view {display:none}
+#lock-screen[data-phase='typing'] .login-view,#lock-screen[data-phase='welcome'] .login-view {display:flex}
+#lock-screen[data-phase='welcome'] .login-password-wrap,#lock-screen[data-phase='welcome'] #login-back {display:none}
+#lock-screen[data-phase='welcome'] .login-progress {font-size:20px;margin:0 0 20px}
+#lock-screen[data-phase='off'] .power-off-view {display:flex}
+#lock-screen[data-phase='off'] .login-system {display:none}
+@keyframes login-in {from{opacity:0;translate:0 18px}to{opacity:1;translate:0}}
+@keyframes login-spin {to{rotate:360deg}}
+.run-panel {left:22px;bottom:62px;width:470px;max-width:calc(100vw - 32px);padding:18px;z-index:4990}
+.run-panel>header {display:flex;align-items:center;gap:9px;font-size:13px;margin-bottom:15px}
+.run-panel>header>button {margin-left:auto}
+.run-panel>header>.icon {width:22px;color:var(--accent)}
+.run-panel>p {font-size:12px;line-height:1.65;color:var(--muted);margin:10px 0 18px}
+.run-panel form {display:grid;grid-template-columns:auto 1fr;align-items:center;gap:12px;font-size:12px}
+.run-panel input {min-width:0;background:var(--surface);padding:8px 10px;border:1px solid var(--border);border-bottom:2px solid var(--accent);border-radius:3px;font-size:12px}
+.run-panel form>footer {grid-column:1/-1;display:flex;gap:8px;justify-content:flex-end;margin-top:10px}
+#run-error {grid-column:1/-1;line-height:1.5;color:#b83c3c;margin:0;font-size:12px}
+#run-error:empty {display:none}
+.context-menu {max-height:calc(100dvh - 80px);overflow:auto;width:285px}
+.context-menu button {gap:10px;padding:8px 10px;min-height:33px}
+.context-menu button>span:not(.menu-check) {flex:1}
+.context-menu .menu-check {flex:0;color:var(--accent);font-size:13px}
+.menu-section-label {font-size:10px;color:var(--muted);padding:7px 11px 3px}
+.context-menu button[aria-checked='true'] {background:var(--selected)}
+.quick-extra {display:flex;gap:8px;margin-top:15px}
+.quick-extra button {font-size:11px;padding:7px 10px;border:1px solid var(--border);border-radius:4px}
+.quick-extra button[aria-pressed='true'] {background:var(--selected);color:var(--accent)}
+.snap-panel {width:560px;max-width:calc(100vw - 24px);bottom:65px;left:50%;transform:translateX(-50%);padding:20px}
+.snap-options {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.snap-options>div>span {font-size:11px;display:block;margin-bottom:6px;color:var(--muted)}
+.snap-option {display:grid;grid-template-columns:repeat(2,1fr);gap:4px;background:var(--canvas);border:1px solid var(--border);border-radius:5px;padding:5px;height:76px}
+.snap-option.snap-3 {grid-template-columns:repeat(3,1fr)}
+.snap-option.snap-4 {grid-template-columns:repeat(2,1fr);grid-template-rows:repeat(2,1fr)}
+.snap-option button {border:1px solid var(--muted);border-radius:3px;font-size:10px;background:var(--hover);color:var(--muted)}
+.snap-option button:hover {background:var(--accent);color:#fff;border-color:var(--accent)}
+.virtual-desktops {display:flex;gap:12px;overflow:auto;padding:4px 2px 20px;margin-bottom:15px;border-bottom:1px solid var(--border)}
+.virtual-desktop {position:relative;border:2px solid transparent;border-radius:6px;padding:5px;flex-shrink:0;width:146px}
+.virtual-desktop.selected {border-color:var(--accent)}
+.virtual-desktop>button:first-child {text-align:left;width:100%;border-radius:4px}
+.desktop-mini-preview {display:block;height:65px;border-radius:4px;background:var(--wallpaper) center/cover;margin-bottom:8px}
+.virtual-desktop strong,.virtual-desktop small {display:block;padding:1px 4px;font-size:11px}
+.virtual-desktop small {font-size:10px;color:var(--muted)}
+.virtual-desktop .remove-desktop {position:absolute;top:8px;right:8px;display:grid;place-items:center;width:23px;height:23px;border-radius:4px;color:white;background:#0b244070}
+.remove-desktop .icon {width:12px;height:12px}
+.new-desktop {width:145px;flex-shrink:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;font-size:12px;border:1px solid var(--border);border-radius:5px}
+.new-desktop>span {font-size:25px;color:var(--muted)}
+.task-card {position:relative;border:1px solid var(--border);border-radius:6px;background:var(--canvas);padding:8px;min-width:0}
+.task-card>button:first-child {width:100%;text-align:left;min-width:0}
+.task-card>button:first-child>span {overflow-wrap:anywhere}
+.task-card>.task-card-close {position:absolute;top:10px;right:10px;width:24px;height:24px;display:grid;place-items:center;background:var(--surface);border:1px solid var(--border);border-radius:4px}
+.task-card-close .icon {width:12px;height:12px}
+.task-card>select {width:100%;margin-top:6px;font-size:10px}
+.settings-v2 .settings-sidebar {width:205px}
+.settings-sidebar nav {display:flex;flex-direction:column;gap:4px}
+.settings-sidebar nav>button {text-align:left;display:flex;gap:10px;align-items:center;padding:11px 10px;border-radius:4px;font-size:12px;position:relative}
+.settings-sidebar nav>button>.icon {width:16px;height:16px;color:var(--muted)}
+.settings-sidebar nav>button[aria-current='page'] {background:var(--selected)}
+.settings-sidebar nav>button[aria-current='page']:before {content:'';position:absolute;left:0;width:3px;height:17px;background:var(--accent);border-radius:3px}
+.settings-v2 .settings-main {min-height:0}
+.theme-options {flex-wrap:wrap}
+.theme-options>button {width:calc((100% - 24px)/3);min-width:100px}
+.system-theme-preview {height:65px;border-radius:3px;background:linear-gradient(90deg,#e9f1fb 50%,#1f2936 50%);position:relative}
+.system-theme-preview:before {content:'▦';position:absolute;inset:0;display:grid;place-items:center;font-size:34px;color:#1684d5}
+.settings-navigation-card {display:flex;align-items:center;gap:12px;padding:18px 16px;background:var(--surface);border:1px solid var(--border);border-radius:5px;width:100%;margin-top:10px;text-align:left;font-size:12px}
+.settings-navigation-card>.icon:last-child {margin-left:auto;width:14px;height:14px}
+.wallpaper-gallery {display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:20px 0}
+.wallpaper-gallery button {min-width:0;border:2px solid transparent;border-radius:6px;background:var(--surface);padding:4px;overflow:hidden;text-align:left}
+.wallpaper-gallery button[aria-pressed='true'] {border-color:var(--accent)}
+.wallpaper-gallery img,.wallpaper-gradient {width:100%;height:80px;object-fit:cover;display:block;border-radius:3px}
+.wallpaper-gallery button>span:last-child {display:block;font-size:10px;padding:6px 3px 3px;line-height:1.4}
+.upload-wallpaper {position:relative;overflow:hidden;flex-shrink:0}
+.upload-wallpaper input {position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer}
+.upload-wallpaper:focus-within {outline:2px solid var(--accent);outline-offset:2px}
+.setting-actions,.system-actions {display:flex;gap:8px;flex-wrap:wrap}
+.settings-main>.fluent-btn-secondary+.fluent-btn-secondary {margin-left:8px}
+.system-about {display:flex;align-items:center;gap:24px;padding:20px 0}
+.system-about>.icon {width:66px;height:66px;color:#1684d5}
+.system-about h1,.system-about h2 {font-size:28px;font-weight:600;letter-spacing:-.6px;margin:0}
+.system-about p {font-size:13px;color:var(--muted);margin:5px 0}
+.system-about span {font-size:11px;color:var(--muted)}
+.winver-app,.shortcuts-app,.taskmanager-app {padding:25px;overflow:auto;flex:1;min-height:0;line-height:1.6}
+.winver-app>p {font-size:12px}
+.shortcut-intro h1 {font-size:25px;margin:0 0 12px;font-weight:600}
+.shortcut-intro p {font-size:12px;color:var(--muted);line-height:1.8}
+.shortcuts-table {margin:22px 0;border:1px solid var(--border);border-radius:5px;background:var(--surface);overflow:hidden}
+.shortcut-row {display:grid;grid-template-columns:1.25fr 1fr 1fr;gap:12px;padding:12px;border-bottom:1px solid var(--border);font-size:11px;align-items:center}
+.shortcut-row:last-child {border:0}
+.shortcut-row kbd {font-size:10px;line-height:1.6;background:var(--canvas);border:0;white-space:normal}
+.shortcut-heading {background:var(--mica);font-size:11px}
+.taskmanager-app>header {display:flex;align-items:center;justify-content:space-between;gap:15px}
+.taskmanager-app h1 {font-size:25px;font-weight:600;margin:0}
+.process-table {margin:25px 0;border:1px solid var(--border);border-radius:5px;overflow:hidden;background:var(--surface)}
+.process-row {display:grid;grid-template-columns:1.4fr .6fr .7fr 1fr;gap:10px;align-items:center;padding:11px 13px;border-bottom:1px solid var(--border);font-size:11px}
+.process-row:last-child {border:0}
+.process-row>span:first-child {display:flex;align-items:center;gap:9px;min-width:0;overflow-wrap:anywhere}
+.process-row .app-icon {width:24px;height:24px}
+.process-row .fluent-btn-secondary {font-size:10px;padding:6px 8px}
+.process-heading {background:var(--mica);font-size:10px}
+.recycle-list {padding:20px;flex:1}
+.recycle-row {padding:15px 10px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border)}
+.recycle-row>span {display:flex;align-items:center;gap:12px;font-size:12px}
+.recycle-row .app-icon {width:30px;height:30px}
+@container(max-width:680px){
+  .settings-v2 {flex-direction:column}
+  .settings-v2 .settings-sidebar {display:block;width:100%;padding:7px 10px;border-bottom:1px solid var(--border)}
+  .settings-v2 .settings-account {display:none}
+  .settings-v2 .settings-sidebar nav {flex-direction:row;overflow:auto;padding-bottom:3px}
+  .settings-sidebar nav>button {white-space:nowrap;padding:9px 10px;gap:6px;font-size:11px;flex-shrink:0}
+  .settings-sidebar nav>button[aria-current='page']:before {top:auto;bottom:0;left:25%;width:50%;height:2px}
+  .wallpaper-gallery {grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+  .process-row {grid-template-columns:1fr auto}
+  .process-row>span:nth-child(2),.process-row>span:nth-child(3),.process-heading>strong:nth-child(2),.process-heading>strong:nth-child(3) {display:none}
+  .shortcut-row {grid-template-columns:1fr 1fr;gap:8px}
+  .shortcut-row>span {grid-column:1/-1;font-weight:600}
+  .shortcut-heading {display:none}
+  .shortcut-row>kbd:first-of-type:before {content:'Windows: ';font-weight:600}
+  .shortcut-row>kbd:last-of-type:before {content:'Web: ';font-weight:600}
+}
+@media(max-width:600px){
+  #lock-time {font-size:72px}#lock-date {font-size:16px}.lock-hint {font-size:11px;max-width:270px;line-height:1.6}
+  .login-card>.login-avatar {width:90px;height:90px;font-size:34px}.login-card h1 {font-size:24px}.login-system {right:18px;bottom:18px}
+  .run-panel {left:12px;bottom:60px;padding:16px;max-width:calc(100vw - 24px)}
+  .run-panel form>footer {flex-wrap:wrap}.snap-panel {padding:16px}.snap-options {gap:10px}
+  .settings-v2 .settings-main {padding:20px 16px}.theme-options>button {min-width:80px}.theme-options img,.system-theme-preview {height:50px}
+  .setting-row {flex-wrap:wrap}.setting-row>div:first-child {flex:1;min-width:140px}.setting-row small {max-width:none}
+  .winver-app,.shortcuts-app,.taskmanager-app {padding:20px 16px}.shortcut-intro h1 {font-size:22px}.shortcut-row {padding:10px}
+  .task-switcher {width:calc(100vw - 24px);padding:15px}.virtual-desktop {width:125px}.new-desktop {width:115px}.task-cards {grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(prefers-reduced-motion:reduce){#lock-screen:before {transition:none}}
