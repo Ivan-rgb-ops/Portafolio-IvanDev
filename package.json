@@ -1,0 +1,12 @@
+{
+  "name": "ivan-portfolio-os",
+  "version": "3.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Portfolio OS de Iván Pieretto inspirado en Windows 11",
+  "scripts": {
+    "start": "python server.py",
+    "test": "node --test tests/geometry.test.js",
+    "check": "node --check app.js && node --check js/window-manager.js && node --check js/apps.js && node --check js/preferences.js && node --check js/icons.js && node --check js/config.js && node --check js/geometry.js && node --check js/desktop.js"
+  }
+}
