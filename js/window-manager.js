@@ -6,6 +6,7 @@ export class WindowManager extends EventTarget {
   constructor(container, renderContent) {
     super(); this.container=container; this.renderContent=renderContent;
     this.windows=new Map(); this.active=null; this.layer=10; this.gesture=null; this.hiddenWindows=[];
+    this.desktops=[{id:1,name:'Escritorio 1'}];this.currentDesktop=1;this.desktopCounter=1;
     window.addEventListener('resize',()=>this.reflow());
     window.addEventListener('blur',()=>this.endGesture(false));
   }
@@ -21,13 +22,15 @@ export class WindowManager extends EventTarget {
       el.innerHTML=`<header class="window-titlebar"><div class="window-title">${appIcon(id)}<span>${apps[id].title}</span></div><div class="window-controls"><button data-action="minimize" aria-label="Minimizar" title="Minimizar">${icon('minimize')}</button><div class="maximize-control"><button data-action="maximize" aria-label="Maximizar" title="Maximizar o restaurar">${icon('maximize')}</button><div class="snap-layouts" aria-label="Acoplar ventana"><button data-snap="left" aria-label="Acoplar a la izquierda"><span></span><span></span></button><button data-snap="right" aria-label="Acoplar a la derecha"><span></span><span></span></button></div></div><button data-action="close" class="window-close" aria-label="Cerrar" title="Cerrar">${icon('close')}</button></div></header><div class="window-app"></div>`;
       const body=el.querySelector('.window-app');
       this.renderContent(id,body);
-      state={id,el,rect:initialRect(apps[id],this.area,this.windows.size),mode:'normal',restore:null,minimized:false};
+      state={id,el,rect:initialRect(apps[id],this.area,this.windows.size),mode:'normal',restore:null,minimized:false,desktop:this.currentDesktop};
       this.windows.set(id,state); this.container.append(el); this.apply(state);
       el.addEventListener('pointerdown',()=>this.focus(id));
       el.addEventListener('focusin',()=>{if(this.active!==id)this.focus(id);});
       const titlebar=el.querySelector('.window-titlebar');
       titlebar.addEventListener('dblclick',event=>{if(!event.target.closest('button'))this.maximize(id);});
       titlebar.addEventListener('pointerdown',event=>this.startGesture(event,state,'move'));
+      titlebar.addEventListener('contextmenu',event=>{event.preventDefault();document.dispatchEvent(new CustomEvent('shell:window-menu',{detail:{id,x:event.clientX,y:event.clientY}}));});
+      el.querySelector('.window-title>.app-icon').addEventListener('click',event=>{event.stopPropagation();const r=titlebar.getBoundingClientRect();document.dispatchEvent(new CustomEvent('shell:window-menu',{detail:{id,x:r.x+8,y:r.y+35}}));});
       el.querySelector('[data-action="minimize"]').onclick=()=>this.minimize(id);
       el.querySelector('[data-action="maximize"]').onclick=()=>this.maximize(id);
       el.querySelector('[data-action="close"]').onclick=()=>this.close(id);
@@ -37,6 +40,7 @@ export class WindowManager extends EventTarget {
         handle.addEventListener('pointerdown',event=>this.startGesture(event,state,direction)); el.append(handle);
       }
     }
+    if(state.desktop!==this.currentDesktop)this.switchDesktop(state.desktop);
     state.minimized=false; state.el.hidden=false; this.focus(id); this.changed();
     return state;
   }
@@ -44,13 +48,13 @@ export class WindowManager extends EventTarget {
     const {x,y,width,height}=state.rect;
     Object.assign(state.el.style,{left:`${x}px`,top:`${y}px`,width:`${width}px`,height:`${height}px`});
     state.el.classList.toggle('is-maximized',state.mode==='max');
-    state.el.classList.toggle('is-snapped',state.mode==='left'||state.mode==='right');
+    state.el.classList.toggle('is-snapped',state.mode!=='normal'&&state.mode!=='max');
     const button=state.el.querySelector('[data-action="maximize"]');
     button.innerHTML=icon(state.mode==='normal'?'maximize':'restore');
     button.setAttribute('aria-label',state.mode==='normal'?'Maximizar':'Restaurar');
   }
   focus(id) {
-    const state=this.windows.get(id); if(!state||state.minimized)return;
+    const state=this.windows.get(id); if(!state||state.minimized||state.desktop!==this.currentDesktop)return;
     this.active=id;
     this.windows.forEach(win=>win.el.classList.toggle('is-active',win.id===id));
     state.el.style.zIndex=++this.layer;
@@ -58,7 +62,7 @@ export class WindowManager extends EventTarget {
     this.changed();
   }
   focusTop() {
-    const top=[...this.windows.values()].filter(s=>!s.minimized).sort((a,b)=>Number(b.el.style.zIndex)-Number(a.el.style.zIndex))[0];
+    const top=[...this.windows.values()].filter(s=>!s.minimized&&s.desktop===this.currentDesktop).sort((a,b)=>Number(b.el.style.zIndex)-Number(a.el.style.zIndex))[0];
     this.active=null; if(top)this.focus(top.id); else document.getElementById('start-button').focus({preventScroll:true});
   }
   minimize(id) {
@@ -77,7 +81,7 @@ export class WindowManager extends EventTarget {
   }
   maximize(id) {
     const state=this.windows.get(id); if(!state)return;
-    if(state.mode!=='normal')this.restore(state); else this.snap(id,'max');
+    if(state.mode==='max')this.restore(state); else this.snap(id,'max');
     this.focus(id);
   }
   restore(state) {
@@ -115,7 +119,8 @@ export class WindowManager extends EventTarget {
     g.started=true;
     if(g.direction==='move') {
       g.state.rect=clampRect({...g.rect,x:g.rect.x+dx,y:g.rect.y+dy},this.area);
-      g.side=event.clientY<=8?'max':event.clientX<=12?'left':event.clientX>=this.area.width-12?'right':null;
+      const edge=event.clientX<=12?'left':event.clientX>=this.area.width-12?'right':null;
+      g.side=edge?(event.clientY<60?'top-':event.clientY>this.area.height-60?'bottom-':'')+edge:event.clientY<=8?'max':null;
       const preview=document.getElementById('snap-preview');preview.hidden=!g.side;
       if(g.side){const r=snapRect(g.side,this.area);Object.assign(preview.style,{left:`${r.x+5}px`,top:`${r.y+5}px`,width:`${r.width-10}px`,height:`${r.height-10}px`});}
     } else {
@@ -135,14 +140,37 @@ export class WindowManager extends EventTarget {
     if(commit&&g.side)this.snap(g.state.id,g.side);
   }
   showDesktop() {
-    const visible=[...this.windows.values()].filter(s=>!s.minimized);
+    const visible=[...this.windows.values()].filter(s=>!s.minimized&&s.desktop===this.currentDesktop);
     if(visible.length){this.hiddenWindows=visible.map(s=>s.id);visible.forEach(s=>this.minimize(s.id));}
-    else {this.hiddenWindows.forEach(id=>{if(this.windows.has(id))this.open(id);});this.hiddenWindows=[];}
+    else {this.hiddenWindows.forEach(id=>{if(this.windows.get(id)?.desktop===this.currentDesktop)this.open(id);});this.hiddenWindows=[];}
   }
-  cycle() {
-    const visible=[...this.windows.values()].filter(s=>!s.minimized);
-    if(visible.length<2)return;
-    const index=visible.findIndex(s=>s.id===this.active);this.focus(visible[(index+1)%visible.length].id);
+  cycle(step=1) {
+    const visible=[...this.windows.values()].filter(s=>s.desktop===this.currentDesktop);
+    if(!visible.length)return;
+    const index=visible.findIndex(s=>s.id===this.active);this.open(visible[(index+step+visible.length)%visible.length].id);
+  }
+  minimizeAll(except=null) {
+    this.windows.forEach(s=>{if(s.desktop===this.currentDesktop&&s.id!==except){s.minimized=true;s.el.hidden=true;}});this.focusTop();this.changed();
+  }
+  down(id) {const state=this.windows.get(id);if(!state)return;if(state.mode!=='normal'){this.restore(state);this.focus(id);}else this.minimize(id);}
+  createDesktop() {
+    if(this.desktops.length>=8)return false;
+    const desktop={id:++this.desktopCounter,name:`Escritorio ${this.desktopCounter}`};this.desktops.push(desktop);this.switchDesktop(desktop.id);return desktop;
+  }
+  switchDesktop(id) {
+    if(!this.desktops.some(d=>d.id===id))return;
+    this.endGesture(false);this.currentDesktop=id;this.windows.forEach(s=>s.el.hidden=s.minimized||s.desktop!==id);this.focusTop();this.changed();
+  }
+  adjacentDesktop(step){const index=this.desktops.findIndex(d=>d.id===this.currentDesktop);const next=this.desktops[index+step];if(next)this.switchDesktop(next.id);}
+  removeDesktop(id) {
+    if(this.desktops.length===1)return;
+    const index=this.desktops.findIndex(d=>d.id===id);if(index<0)return;
+    const destination=this.desktops[index?index-1:1].id;
+    this.windows.forEach(s=>{if(s.desktop===id)s.desktop=destination;});this.desktops.splice(index,1);this.switchDesktop(this.currentDesktop===id?destination:this.currentDesktop);
+  }
+  moveToDesktop(id,desktop) {
+    const state=this.windows.get(id);if(!state||!this.desktops.some(d=>d.id===desktop))return;
+    state.desktop=desktop;state.el.hidden=state.minimized||desktop!==this.currentDesktop;this.focusTop();this.changed();
   }
   reflow() {
     this.endGesture(false);

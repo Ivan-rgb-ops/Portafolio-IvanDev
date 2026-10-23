@@ -1,19 +1,23 @@
 import {apps, normalize} from './config.js';
 import {icon, appIcon} from './icons.js';
+import {renderSettings} from './settings.js';
+import {renderTaskManager,renderRecycle,renderSystemApp} from './system-apps.js';
 
 const folders=[['projects','Proyectos','3 proyectos destacados'],['about','Sobre mí','Mi recorrido y habilidades'],['resume','Documentos','Currículum en PDF'],['contact','Contacto','Conectemos']];
 const files=[['resume','Iván_Pieretto_CV.pdf','Documento PDF · Currículum'],['projects','adaptIA','Proyecto · React, IA y Vite'],['projects','Estudio el Oso','Proyecto · Three.js y GSAP'],['projects','Chappie-bot','Proyecto · Python e IA local']];
 
-export function createAppRenderer({open,notify,preferences}) {
+export function createAppRenderer({open,notify,preferences,getManager,action}) {
   return function render(id,body) {
     const template=document.getElementById(`app-${id}`);
     if(template)body.append(template.content.cloneNode(true));
     else if(id==='explorer')renderExplorer(body,open);
-    else if(id==='settings')renderSettings(body,preferences);
+    else if(id==='settings')renderSettings(body,preferences,{notify,action});
     else if(id==='terminal')renderTerminal(body,open,notify,preferences);
     else if(id==='chat')renderChat(body);
     else if(id==='recruiter')body.innerHTML=`<div class="recruiter-summary"><span class="eyebrow">RESUMEN PARA RECLUTADORES</span><h1>Iván Pieretto</h1><p>Desarrollo de software · Front-End & IA</p><span class="availability"><i></i> Disponible para trabajar</span><p class="muted">Rosario, Santa Fe, Argentina</p><h2>Perfil</h2><p>Busco desarrollarme profesionalmente como Software Developer, Front-End Developer o IT Trainee. Me apasiona resolver problemas reales con tecnología, construir aplicaciones y explorar flujos con inteligencia artificial.</p><h2>Proyectos destacados</h2><div class="fluent-group"><button data-open="projects"><strong>adaptIA</strong><span>Adaptación y optimización de currículums con IA</span>${icon('chevron')}</button><button data-open="projects"><strong>Estudio el Oso</strong><span>Web para un estudio de fotografía con una lente 3D procedural</span>${icon('chevron')}</button><button data-open="projects"><strong>Chappie-bot</strong><span>Asistente local con control por voz y LLMs</span>${icon('chevron')}</button></div><h2>Stack</h2><p>JavaScript · TypeScript · Python · SQL · React · Vite · Three.js · GSAP · Node.js · React Native · Ollama · n8n</p><div class="recruiter-actions"><a class="fluent-btn-primary" href="Ivan_Pieretto_CV.pdf" download>${icon('download')} Descargar CV (PDF)</a><button class="fluent-btn-secondary" data-open="contact">${icon('mail')} Contactar</button><button class="fluent-btn-secondary" data-open="about">Ver formación y habilidades</button></div></div>`;
-    else if(id==='recycle')body.innerHTML=`<div class="explorer-toolbar">${icon('trash')} Papelera de reciclaje</div><div class="empty-state">${appIcon('recycle')}<h2>La papelera está vacía</h2><p>No hay archivos eliminados en este escritorio.</p></div><div class="explorer-status">0 elementos</div>`;
+    else if(id==='recycle')renderRecycle(body);
+    else if(id==='taskmanager')renderTaskManager(body,getManager());
+    else if(id==='shortcuts'||id==='system')renderSystemApp(id,body);
     else if(id==='doom')body.innerHTML='<iframe id="doom-iframe" data-src="https://archive.org/embed/doom_dos" title="DOOM en DOS" allow="autoplay; fullscreen; gamepad" allowfullscreen></iframe>';
     bindPortfolio(body,notify);
   };
@@ -35,15 +39,6 @@ function renderExplorer(body,open) {
     event.currentTarget.textContent=descending?'Ordenar Z–A':'Ordenar A–Z';
   };
   body.querySelector('#explorer-view').onclick=event=>{const list=body.classList.toggle('explorer-list');event.currentTarget.textContent=list?'Vista de iconos':'Vista de lista';};
-}
-
-function renderSettings(body,prefs) {
-  body.innerHTML=`<div class="settings-layout"><aside class="settings-sidebar"><div class="settings-account"><span class="login-avatar">IP</span><strong>Iván Pieretto</strong><small>Portfolio OS</small></div><span class="settings-selected">${icon('paint')} Personalización</span></aside><div class="settings-main"><h1>Personalización</h1><p class="muted">Un escritorio que se siente tuyo.</p><div class="settings-preview"><div class="preview-window"><span></span><span></span><span></span></div></div><h2>Elegí tu tema</h2><div class="theme-options"><button data-theme-choice="light"><img src="assets/bloom-light.jpg" alt="Tema claro con Bloom azul"><span>Windows claro</span></button><button data-theme-choice="dark"><img src="assets/bloom-dark.jpg" alt="Tema oscuro con Bloom azul"><span>Windows oscuro</span></button></div><div class="setting-row"><div><strong>Fondo de escritorio</strong><small>Elegí el paisaje de tu espacio</small></div><select id="wallpaper-choice" aria-label="Fondo de escritorio"><option value="bloom">Bloom</option><option value="space">Espacio</option><option value="city">Ciudad</option></select></div><div class="setting-row"><div><strong>Color de énfasis</strong><small>Botones, selección e indicadores</small></div><div class="accent-options">${['#0067c0','#8764b8','#008575','#c23964'].map((c,i)=>`<button class="accent-choice" style="--swatch:${c}" data-accent="${c}" aria-label="${['Azul','Violeta','Verde','Rosa'][i]}"></button>`).join('')}</div></div><div class="setting-row"><div><strong>Efectos de animación</strong><small>Respetan la preferencia de tu sistema</small></div><button id="motion-toggle" class="switch" role="switch" aria-label="Efectos de animación" aria-checked="true"></button></div><div class="settings-shortcuts"><h2>Movete como en tu escritorio</h2><p><kbd>Ctrl</kbd> + <kbd>K</kbd> Buscar aplicaciones</p><p><kbd>Ctrl</kbd> + <kbd>Alt</kbd> + <kbd>D</kbd> Mostrar escritorio</p><p><kbd>Ctrl</kbd> + <kbd>Alt</kbd> + <kbd>← / →</kbd> Acoplar ventana</p><p><kbd>Esc</kbd> Cerrar paneles</p></div><small class="muted">Una experiencia web inspirada en Windows 11, creada para explorar mi portafolio.</small></div></div>`;
-  body.querySelectorAll('[data-theme-choice]').forEach(b=>b.onclick=()=>prefs.setTheme(b.dataset.themeChoice));
-  body.querySelectorAll('[data-accent]').forEach(b=>b.onclick=()=>prefs.setAccent(b.dataset.accent));
-  body.querySelector('#wallpaper-choice').onchange=e=>prefs.setWallpaper(e.target.value);
-  body.querySelector('#motion-toggle').onclick=()=>prefs.toggleMotion();
-  queueMicrotask(()=>prefs.sync());
 }
 
 function bindPortfolio(body,notify) {

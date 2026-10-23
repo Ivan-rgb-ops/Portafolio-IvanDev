@@ -3,8 +3,11 @@ import socketserver
 import urllib.parse
 import os
 import sys
+import argparse
 
-PORT = 3000
+parser = argparse.ArgumentParser(description='Servidor local de Portfolio OS')
+parser.add_argument('--port', type=int, default=3000)
+PORT = parser.parse_args().port
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
 class CleanHandler(http.server.SimpleHTTPRequestHandler):
@@ -18,7 +21,7 @@ class CleanHandler(http.server.SimpleHTTPRequestHandler):
         self.send_header('Expires', '0')
         super().end_headers()
 
-socketserver.TCPServer.allow_reuse_address = True
-with socketserver.TCPServer(("", PORT), CleanHandler) as httpd:
-    print(f"Portfolio OS server running on port {PORT}")
+http.server.ThreadingHTTPServer.allow_reuse_address = os.name != 'nt'
+with http.server.ThreadingHTTPServer(("127.0.0.1", PORT), CleanHandler) as httpd:
+    print(f"Portfolio OS: http://127.0.0.1:{PORT}", flush=True)
     httpd.serve_forever()
