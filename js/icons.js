@@ -1,6 +1,7 @@
 const paths = {
   search: '<circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/>',
   minimize: '<path d="M5 12h14"/>', maximize: '<rect x="5" y="5" width="14" height="14" rx="1"/>',
+  play: '<path d="m8 4 13 8-13 8z"/>',
   restore: '<path d="M8 5V3h13v13h-2"/><rect x="3" y="8" width="13" height="13" rx="1"/>',
   close: '<path d="m6 6 12 12M18 6 6 18"/>',
   folder: '<path d="M3 7V5h7l2 2h9v13H3z"/>',
