@@ -2,6 +2,7 @@ import {apps, normalize} from './config.js';
 import {icon, appIcon} from './icons.js';
 import {renderSettings} from './settings.js';
 import {renderTaskManager,renderRecycle,renderSystemApp} from './system-apps.js';
+import {renderProjectPreviews} from './project-previews.js';
 
 const folders=[['projects','Proyectos','3 proyectos destacados'],['about','Sobre mí','Mi recorrido y habilidades'],['resume','Documentos','Currículum en PDF'],['contact','Contacto','Conectemos']];
 const files=[['resume','Iván_Pieretto_CV.pdf','Documento PDF · Currículum'],['projects','adaptIA','Proyecto · React, IA y Vite'],['projects','Estudio el Oso','Proyecto · Three.js y GSAP'],['projects','Chappie-bot','Proyecto · Python e IA local']];
@@ -20,6 +21,7 @@ export function createAppRenderer({open,notify,preferences,getManager,action}) {
     else if(id==='shortcuts'||id==='system')renderSystemApp(id,body);
     else if(id==='doom')body.innerHTML='<iframe id="doom-iframe" data-src="https://archive.org/embed/doom_dos" title="DOOM en DOS" allow="autoplay; fullscreen; gamepad" allowfullscreen></iframe>';
     bindPortfolio(body,notify);
+    if(id==='projects')renderProjectPreviews(body);
   };
 }
 
