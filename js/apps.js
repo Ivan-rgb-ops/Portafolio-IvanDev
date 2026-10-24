@@ -21,7 +21,7 @@ export function createAppRenderer({open,notify,preferences,getManager,action}) {
     else if(id==='shortcuts'||id==='system')renderSystemApp(id,body);
     else if(id==='doom')body.innerHTML='<iframe id="doom-iframe" data-src="https://archive.org/embed/doom_dos" title="DOOM en DOS" allow="autoplay; fullscreen; gamepad" allowfullscreen></iframe>';
     bindPortfolio(body,notify);
-    if(id==='projects')renderProjectPreviews(body);
+    if(id==='projects')renderProjectPreviews(body,preferences);
   };
 }
 

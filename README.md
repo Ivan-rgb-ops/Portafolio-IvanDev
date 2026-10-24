@@ -84,7 +84,7 @@ js/
   shortcuts.js               Combinaciones de teclas y comandos de Ejecutar
   desktop-state.js            Nombres, orden y papelera de accesos
   system-apps.js              Administrador de tareas y ventanas del sistema
-  project-previews.js         Fotos de proyectos y visor ampliado accesible
+  project-previews.js         Capturas HD, clips al pasar el mouse y visor ampliado
 assets/                      Fondos Bloom, favicon y créditos
 terminal-easter-eggs.js       Easter eggs originales del proyecto
 Ivan_Pieretto_CV.pdf          CV original descargable

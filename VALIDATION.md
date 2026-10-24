@@ -1,3 +1,16 @@
+## Capturas HD y vistas animadas — 24 de octubre de 2026
+
+- Nuevas capturas de escritorio de 1569–1575 px, sin ampliar los archivos anteriores; posters WebP y tarjetas 16:9 que aprovechan el ancho disponible.
+- Tres clips H.264 de 3,33, 4 y 5 segundos: decodificación completa comprobada sin errores. Secuencias capturadas del navegador; se comprobó variación entre los fotogramas. Videos: 417 123 bytes en total; sin dependencias nuevas para el sitio.
+- Navegador integrado: las tres imágenes cargan con su resolución natural; al abrir Proyectos inicialmente no existe ningún elemento video ni fuente de video para descargar.
+- Recorrido del puntero por las tarjetas: creación diferida de los videos y pausa al salir. Teclado: cada una de las tres vistas reproduce con currentTime > 0 y se pausa al cambiar de tarjeta.
+- Minimizar pausa y reinicia los clips; Animaciones desactivadas mantiene todas las vistas en el poster, incluso con foco de teclado.
+- Visor: las tres capturas abren en su resolución nueva; Escape cierra el diálogo y devuelve el foco.
+- Móvil 390 × 844: tarjetas de 320 × 180, sin desbordamiento horizontal; visor de 356 px y textos accesibles. Restablecido el tamaño del navegador al terminar.
+- Consola del navegador sin errores. Comprobadas sintaxis de los 16 archivos y las 19 pruebas existentes.
+
+Chappie muestra una demostración visual del HTML y las funciones originales de animación, ampliados para la miniatura. Se indica en la propia imagen y en el visor. No se iniciaron voz, IA ni comandos del sistema. La preferencia de reducir movimiento del sistema también se consulta en código; la revisión interactiva de esta entrega usó el control de Animaciones del portafolio.
+
 # Revisión del refactor
 
 ## Ampliación Windows y capturas · 24 de octubre de 2026
