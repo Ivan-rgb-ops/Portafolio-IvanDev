@@ -24,6 +24,10 @@ test('locking during typing starts a fresh sequence without stale callbacks',()=
 test('reduced motion enters without artificial typing delays',()=>{
   const timer=clock(),login=new LoginSequence(()=>{},{...timer,reducedMotion:()=>true});login.lock();login.begin();assert.equal(login.state,'desktop');
 });
+test('default login timers are invoked without binding them to the controller',()=>{
+  const originalSet=globalThis.setTimeout,originalClear=globalThis.clearTimeout;let scheduled=0;
+  try{globalThis.setTimeout=function(){assert.equal(this,undefined);return ++scheduled;};globalThis.clearTimeout=function(){assert.equal(this,undefined);};const login=new LoginSequence(()=>{});login.lock();login.begin();assert.equal(scheduled,5);login.finish();}finally{globalThis.setTimeout=originalSet;globalThis.clearTimeout=originalClear;}
+});
 const key=(key,modifiers={},context={})=>shortcutAction({key,ctrlKey:false,altKey:false,shiftKey:false,metaKey:false,...modifiers},context);
 test('browser alternatives map to desktop actions and virtual desktops',()=>{
   assert.equal(key('r',{ctrlKey:true,altKey:true}),'run');
@@ -31,6 +35,7 @@ test('browser alternatives map to desktop actions and virtual desktops',()=>{
   assert.equal(key('d',{ctrlKey:true,altKey:true,shiftKey:true}),'new-desktop');
   assert.equal(key('3',{ctrlKey:true,altKey:true}),'pinned-3');
   assert.equal(key('Tab',{altKey:true,shiftKey:true}),'cycle-back');
+  assert.equal(key('k',{metaKey:true}),'search');
 });
 test('AltGr and normal text editing are never interpreted as shell actions',()=>{
   assert.equal(key('q',{ctrlKey:true,altKey:true,getModifierState:name=>name==='AltGraph'}),null);
@@ -58,3 +63,6 @@ function virtualManager(){const manager=Object.create(WindowManager.prototype);O
 test('switching desktops preserves minimized state and hides windows from other desktops',()=>{const manager=virtualManager();manager.switchDesktop(2);assert.equal(manager.windows.get('about').el.hidden,true);assert.equal(manager.windows.get('projects').el.hidden,true);manager.windows.get('projects').minimized=false;manager.switchDesktop(2);assert.equal(manager.windows.get('projects').el.hidden,false);});
 test('closing a desktop moves its apps without losing them',()=>{const manager=virtualManager();manager.switchDesktop(2);manager.removeDesktop(2);assert.equal(manager.currentDesktop,1);assert.equal(manager.windows.size,2);assert.equal(manager.windows.get('projects').desktop,1);assert.equal(manager.windows.get('projects').minimized,true);manager.removeDesktop(1);assert.equal(manager.desktops.length,1);});
 test('virtual desktop creation has a bounded limit and unique identities',()=>{const manager=virtualManager();for(let i=0;i<6;i++)assert.ok(manager.createDesktop());assert.equal(manager.createDesktop(),false);assert.equal(new Set(manager.desktops.map(d=>d.id)).size,8);});
+test('windows regain their desktop dimensions after a narrow viewport',()=>{
+  const manager=virtualManager();let area={width:1366,height:852};Object.defineProperty(manager,'area',{get:()=>area});manager.previousWidth=375;manager.apply=()=>{};manager.windows=new Map([['about',{id:'about',mode:'normal',rect:{x:0,y:0,width:375,height:650}}]]);manager.reflow();assert.equal(manager.windows.get('about').rect.width,900);const wide={...manager.windows.get('about').rect};area={width:390,height:796};manager.reflow();assert.equal(manager.windows.get('about').rect.width,390);area={width:1366,height:852};manager.reflow();assert.deepEqual(manager.windows.get('about').rect,wide);
+});

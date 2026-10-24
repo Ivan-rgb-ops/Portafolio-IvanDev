@@ -3,6 +3,7 @@ export const shortcuts = [
   ['Buscar aplicaciones','⊞ + S','Ctrl + K','search'],
   ['Explorador de archivos','⊞ + E','Ctrl + Alt + E','explorer'],
   ['Configuración','⊞ + I','Ctrl + Alt + I','settings'],
+  ['Accesibilidad','⊞ + U','Ctrl + Alt + U','accessibility'],
   ['Mostrar / restaurar escritorio','⊞ + D','Ctrl + Alt + D','desktop'],
   ['Minimizar ventanas','⊞ + M','Ctrl + Alt + M','minimize-all'],
   ['Restaurar ventanas minimizadas','⊞ + Mayús + M','Ctrl + Alt + Mayús + M','restore-all'],
@@ -37,7 +38,7 @@ export const shortcuts = [
 export function shortcutAction(event,{editing=false,desktopSelected=false,explorerActive=false}={}) {
   if(event.getModifierState?.('AltGraph'))return null;
   const key=event.key.toLowerCase(),ctrl=event.ctrlKey,alt=event.altKey,shift=event.shiftKey,win=event.metaKey;
-  if(ctrl&&!alt&&!shift&&(key==='k'))return 'search';
+  if((ctrl||win)&&!alt&&!shift&&key==='k')return 'search';
   if(ctrl&&alt&&!win){
     if(shift){return {d:'new-desktop',q:'close-desktop',m:'restore-all'}[key]||null;}
     const action={k:'start',s:'search',e:'explorer',i:'settings',u:'accessibility',d:'desktop',m:'minimize-all',l:'lock',a:'quick',n:'calendar',r:'run',x:'power-user',t:'tasks',z:'snap',w:'window-menu',q:'close',p:'taskmanager',h:'help',b:'tray',f5:'refresh',pagedown:'next-wallpaper','[':'previous-desktop',']':'next-desktop',arrowleft:'snap-left',arrowright:'snap-right',arrowup:'maximize',arrowdown:'down'}[key];

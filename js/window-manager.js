@@ -7,6 +7,7 @@ export class WindowManager extends EventTarget {
     super(); this.container=container; this.renderContent=renderContent;
     this.windows=new Map(); this.active=null; this.layer=10; this.gesture=null; this.hiddenWindows=[];
     this.desktops=[{id:1,name:'Escritorio 1'}];this.currentDesktop=1;this.desktopCounter=1;
+    this.previousWidth=window.innerWidth;
     window.addEventListener('resize',()=>this.reflow());
     window.addEventListener('blur',()=>this.endGesture(false));
   }
@@ -174,6 +175,14 @@ export class WindowManager extends EventTarget {
   }
   reflow() {
     this.endGesture(false);
-    this.windows.forEach(state=>{state.rect=state.mode==='normal'?clampRect(state.rect,this.area):snapRect(state.mode,this.area);this.apply(state);});
+    this.windows.forEach(state=>{
+      if(state.mode==='normal'){
+        if(this.area.width<=600&&this.previousWidth>600)state.wideRect={...state.rect};
+        const rect=this.area.width>600&&this.previousWidth<=600?(state.wideRect||initialRect(apps[state.id],this.area)):state.rect;
+        state.rect=clampRect(rect,this.area);
+      }else state.rect=snapRect(state.mode,this.area);
+      this.apply(state);
+    });
+    this.previousWidth=this.area.width;
   }
 }

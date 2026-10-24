@@ -62,7 +62,7 @@ function bindPortfolio(body,notify) {
 }
 
 function renderTerminal(body,open,notify,prefs) {
-  body.innerHTML=`<div class="terminal-body"><div class="terminal-banner">Portfolio OS [Versión 3.0]<br>Iván Pieretto · Terminal web<br><br>Escribí <strong>help</strong> para ver los comandos.</div><div id="term-output" role="log" aria-label="Salida de la terminal"></div><form class="terminal-line-input"><label for="term-input">PS C:\\Users\\Visitante&gt;</label><input id="term-input" autocomplete="off" spellcheck="false" aria-label="Comando de terminal"></form></div>`;
+  body.innerHTML=`<div class="terminal-body"><div class="terminal-banner">Portfolio OS [Versión 4.0]<br>Iván Pieretto · Terminal web<br><br>Escribí <strong>help</strong> para ver los comandos.</div><div id="term-output" role="log" aria-label="Salida de la terminal"></div><form class="terminal-line-input"><label for="term-input">PS C:\\Users\\Visitante&gt;</label><input id="term-input" autocomplete="off" spellcheck="false" aria-label="Comando de terminal"></form></div>`;
   const output=body.querySelector('#term-output'),input=body.querySelector('input');let history=[],index=0;
   const responses={
     help:'about · projects · skills · contact · neofetch · whoami · date · dir · clear\nopen [about / projects / resume / contact / chat / settings]\ntheme [light / dark] · coffee · matrix · doom · secrets',
@@ -70,7 +70,7 @@ function renderTerminal(body,open,notify,prefs) {
     projects:'adaptIA — Adaptador de currículums con IA\nEstudio el Oso — Experiencia web inmersiva\nChappie-bot — Asistente de IA local por voz',
     skills:'HTML · CSS · JavaScript · TypeScript · Python · SQL\nReact · Vite · Three.js · GSAP · Node.js · React Native\nGit · GitHub · Ollama · n8n · IA generativa',
     contact:'pierettoivan2004@gmail.com\nlinkedin.com/in/ivan-pieretto\ngithub.com/Ivan-rgb-ops\nAbrí Contacto para ver todos los canales.',
-    neofetch:'▦  Portfolio OS 3.0\n   Interfaz: inspirada en Windows 11\n   Motor: HTML + CSS + JavaScript modular\n   Shell: terminal web\n   Autor: Iván Pieretto',
+    neofetch:'▦  Portfolio OS 4.0\n   Interfaz: inspirada en Windows 11\n   Motor: HTML + CSS + JavaScript modular\n   Shell: terminal web\n   Autor: Iván Pieretto',
     whoami:'Visitante · bienvenido al escritorio de Iván', dir:'Proyectos/  Sobre mí/  Contacto/  Iván_Pieretto_CV.pdf',ls:'Proyectos/  Sobre mí/  Contacto/  Iván_Pieretto_CV.pdf',
   };
   body.querySelector('form').onsubmit=event=>{
