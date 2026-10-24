@@ -23,8 +23,8 @@ export function renderProjectPreviews(body,preferences){
   app.addEventListener('app:close',()=>{stopAll();controller.abort();visibilityObserver.disconnect();intersectionObserver.disconnect();},{once:true});
   body.querySelectorAll('[data-project]').forEach(card=>{
     const capture=captures[card.dataset.project];if(!capture)return;
-    const button=document.createElement('button');button.type='button';button.className='project-preview-button';button.setAttribute('aria-label',`Ampliar captura de ${capture.name}`);
-    button.innerHTML=`<img src="${capture.src}" width="${capture.width}" height="${capture.height}" alt="Vista de ${capture.name}" loading="lazy" decoding="async"><span class="project-preview-motion" aria-hidden="true">${icon('play')} Vista animada</span><span class="project-preview-caption">${icon('maximize')} Ampliar captura</span>`;
+    const button=document.createElement('button');button.type='button';button.className='project-preview-button';button.setAttribute('aria-label',`Abrir vista previa de ${capture.name}`);
+    button.innerHTML=`<img src="${capture.src}" width="${capture.width}" height="${capture.height}" alt="Vista de ${capture.name}" loading="lazy" decoding="async"><span class="project-preview-motion" aria-hidden="true">${icon('play')} Vista animada</span><span class="project-preview-caption">${icon('maximize')} Ver vista previa</span>`;
     card.querySelector('.project-desc').before(button);
     let video,hovered=false,focused=false,playRequest=0;
     const stop=()=>{playRequest++;hovered=false;focused=false;video?.pause();button.classList.remove('is-playing');if(video?.readyState>=1)video.currentTime=0;};
@@ -44,17 +44,28 @@ export function renderProjectPreviews(body,preferences){
     button.addEventListener('focus',()=>{focused=button.matches(':focus-visible');start();},{signal});
     button.addEventListener('blur',stop,{signal});
     button.addEventListener('preview:stop',stop,{signal});
-    button.onclick=()=>{stop();openPreview(capture,button);};
+    button.onclick=()=>{stop();openPreview(capture,button,preferences);};
     stops.push(stop);intersectionObserver.observe(button);
   });
 }
 
-function openPreview(capture,origin){
-  const dialog=document.createElement('dialog');dialog.className='project-preview-dialog';dialog.setAttribute('aria-label',`Captura de ${capture.name}`);
-  dialog.innerHTML=`<header><strong>${capture.name}</strong><button type="button" class="icon-button" aria-label="Cerrar captura">${icon('close')}</button></header><div class="project-preview-image"><img src="${capture.src}" alt="Captura ampliada de ${capture.name}" width="${capture.width}" height="${capture.height}"></div><footer><p>${capture.caption}</p><a href="${capture.url}" target="_blank" rel="noopener noreferrer" class="fluent-btn-primary">${capture.name==='Chappie-bot'?'Ver repositorio':'Visitar proyecto'} ↗</a></footer>`;
+function openPreview(capture,origin,preferences){
+  const controller=new AbortController(),{signal}=controller;
+  const reducedMotion=matchMedia('(prefers-reduced-motion: reduce)');
+  const dialog=document.createElement('dialog');dialog.className='project-preview-dialog';dialog.setAttribute('aria-label',`Vista previa de ${capture.name}`);
+  dialog.innerHTML=`<header><strong>${capture.name}</strong><button type="button" class="icon-button" aria-label="Cerrar vista previa">${icon('close')}</button></header><div class="project-preview-image"><video controls playsinline loop muted preload="metadata" poster="${capture.src}" src="${capture.video}" aria-label="Vista animada de ${capture.name}" width="${capture.width}" height="${capture.height}"></video><p class="project-preview-help">Video sin audio. Podés pausar, repetir o verlo en pantalla completa.</p><p role="status" class="project-preview-error" hidden>No se pudo cargar el video. Podés visitar el proyecto con el enlace de abajo.</p></div><footer><p>${capture.caption}</p><a href="${capture.url}" target="_blank" rel="noopener noreferrer" class="fluent-btn-primary">${capture.name==='Chappie-bot'?'Ver repositorio':'Visitar proyecto'} ↗</a></footer>`;
+  const video=dialog.querySelector('video');video.muted=true;
+  const pause=()=>video.pause();
+  const motionChanged=()=>{if(!preferences.motion||reducedMotion.matches)pause();};
+  preferences.addEventListener('change',motionChanged,{signal});
+  reducedMotion.addEventListener('change',motionChanged,{signal});
+  document.addEventListener('visibilitychange',()=>{if(document.hidden)pause();},{signal});
+  origin.closest('.os-window')?.addEventListener('app:close',()=>dialog.close(),{signal});
+  video.addEventListener('error',()=>{dialog.querySelector('.project-preview-error').hidden=false;},{signal});
   document.body.append(dialog);dialog.showModal();
+  if(preferences.motion&&!reducedMotion.matches)video.play().catch(()=>{});
   dialog.addEventListener('keydown',event=>event.stopPropagation());
   dialog.querySelector('button').onclick=()=>dialog.close();
   dialog.addEventListener('click',event=>{if(event.target===dialog){const r=dialog.getBoundingClientRect();if(event.clientX<r.left||event.clientX>r.right||event.clientY<r.top||event.clientY>r.bottom)dialog.close();}});
-  dialog.addEventListener('close',()=>{dialog.remove();if(origin.isConnected)origin.focus({preventScroll:true});},{once:true});
+  dialog.addEventListener('close',()=>{pause();controller.abort();video.removeAttribute('src');video.load();dialog.remove();if(origin.isConnected)origin.focus({preventScroll:true});},{once:true});
 }

@@ -262,7 +262,8 @@ hr {border:0;border-top:1px solid var(--border);margin:8px 0}
 .project-preview-dialog::backdrop {background:#06101cc9;backdrop-filter:blur(5px)}
 .project-preview-dialog>header {display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 15px;background:var(--mica);font-size:13px}
 .project-preview-image {padding:12px;background:var(--surface)}
-.project-preview-image>img {width:100%;max-height:65dvh;object-fit:contain;display:block}
+.project-preview-image>video {width:100%;height:auto;max-height:65dvh;object-fit:contain;display:block;background:#111;border-radius:4px}
+.project-preview-help,.project-preview-error {margin:10px 0 0;font-size:11px;line-height:1.6;color:var(--muted)}
 .project-preview-dialog>footer {padding:12px 16px;display:flex;align-items:center;gap:16px;justify-content:space-between;border-top:1px solid var(--border)}
 .project-preview-dialog>footer>p {font-size:11px;color:var(--muted);line-height:1.6;margin:0;max-width:620px}
 .project-preview-dialog>footer>a {white-space:nowrap;flex-shrink:0}

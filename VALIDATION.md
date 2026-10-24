@@ -1,3 +1,9 @@
+## Reproductor ampliado al hacer clic — 24 de octubre de 2026
+
+El clic sobre las miniaturas abre ahora el clip ampliado con controles nativos de video, repetición, pantalla completa y enlace al proyecto. Los textos y nombres accesibles dicen vista previa. Al cerrar se pausa y libera el video.
+
+Verificado en el navegador integrado: los tres clips abren con sus enlaces correctos; reproducción real de adaptIA con currentTime > 0, pausa con Espacio, cierre con Escape y retorno del foco. Con Animaciones desactivadas abre pausado y permite reproducción manual. En móvil 390 × 844, diálogo de 356 px y video de 342 px, sin desbordamiento. Consola sin errores. npm run check y npm test (19/19) correctos.
+
 ## Capturas HD y vistas animadas — 24 de octubre de 2026
 
 - Nuevas capturas de escritorio de 1569–1575 px, sin ampliar los archivos anteriores; posters WebP y tarjetas 16:9 que aprovechan el ancho disponible.
