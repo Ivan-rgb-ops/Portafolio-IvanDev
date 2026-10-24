@@ -46,11 +46,15 @@ export function appIcon(name) {
     chat: `<path d="M7 10h50v36H27L14 57V46H7z" fill="url(#${id})"/><path d="m32 18 3.5 9 9 3.5-9 3.5-3.5 9-3.5-9-9-3.5 9-3.5z" fill="white"/>`,
     settings: `<path d="m25 4 14 0 3 8 8 1 7 12-5 7 5 7-7 12-8 1-3 8H25l-3-8-8-1-7-12 5-7-5-7 7-12 8-1z" fill="url(#${id})"/><circle cx="32" cy="32" r="13" fill="#d0dce9"/><circle cx="32" cy="32" r="8" fill="#3489d1"/>`,
     recycle: `<path d="m15 14 3 44h28l3-44z" fill="url(#${id})" stroke="#8aa9bc"/><path d="M12 11h40v5H12z" fill="#e7f7ff"/><path d="m25 27 6-6 7 4-3 1m8 5 2 8-8 5v-4m-5 8-8-2-1-8 3 2" stroke="#49a7d5" fill="none" stroke-width="2"/>`,
+    taskmanager: `<rect x="5" y="8" width="54" height="48" rx="5" fill="url(#${id})"/><path d="M14 44V31m12 13V22m12 22V35m12 9V17" stroke="#fff" stroke-width="5" stroke-linecap="round"/>`,
+    shortcuts: `<rect x="3" y="14" width="58" height="37" rx="5" fill="url(#${id})"/><path d="M11 23h4m6 0h4m6 0h4m6 0h4m6 0h3M11 32h4m6 0h4m6 0h4m6 0h4m6 0h3M16 42h32" stroke="#fff" stroke-width="4" stroke-linecap="round"/>`,
+    system: '<path d="M5 5h25v25H5zm29 0h25v25H34zM5 34h25v25H5zm29 0h25v25H34z" fill="#1684d5"/>',
   };
   const colors = {
     explorer:['#ffe699','#f4b52c'], projects:['#ffe699','#f4b52c'], about:['#58b4f5','#1480dc'],
     resume:['#fcfeff','#d2e9ff'], contact:['#39b9ff','#0873c9'], terminal:['#344454','#14212e'],
     chat:['#bb80f9','#6440d3'], settings:['#b4c4d2','#5b7289'], recycle:['#ffffff','#c7e0ed'],
+    taskmanager:['#74c8ec','#1682bd'],shortcuts:['#94aac4','#4a5f78'],
   };
   const [a,b] = colors[name] || colors.about;
   return `<svg class="app-icon" viewBox="0 0 64 64" aria-hidden="true"><defs><linearGradient id="${id}" x2=".4" y2="1"><stop stop-color="${a}"/><stop offset="1" stop-color="${b}"/></linearGradient></defs>${artwork[name] || artwork.about}</svg>`;

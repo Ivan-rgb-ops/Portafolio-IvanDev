@@ -6,6 +6,19 @@ Portafolio interactivo inspirado en el escritorio de Windows 11. Los proyectos, 
 
 Capturas adicionales: [Explorador](docs/desktop.png) · [Vista móvil](docs/mobile.png).
 
+## Experiencia Windows 4.0
+
+- Inicio con pantalla de bloqueo, escritura automática de la contraseña de demostración y bienvenida. Enter permite acelerar la entrada; «Entrar ahora» omite la espera. Se puede desactivar la presentación desde Accesibilidad.
+- Galería de 12 fondos, imagen propia guardada en IndexedDB local, ajustes de relleno y presentación automática cada minuto.
+- Temas claro, oscuro y del equipo; transparencia, contraste elevado, alineación de barra, búsqueda y tamaños de iconos.
+- Ejecutar (`Ctrl + Alt + R`), menú de acceso rápido, menú de ventana con movimiento y tamaño mediante flechas, diseños en mitades, tercios, cuadrantes y ventanas amplias.
+- Hasta ocho escritorios virtuales. Las ventanas se pueden mover entre ellos; cerrar un escritorio conserva sus aplicaciones en otro.
+- Administrador de tareas para las ventanas del portafolio, anclar/desanclar apps, renombrar accesos, papelera recuperable y deshacer la eliminación de un acceso con `Ctrl + Z`.
+- Guía de más de 30 acciones de teclado con combinaciones Windows y alternativas para la web. Los atajos que recibe el navegador se manejan dentro del portafolio; las combinaciones reservadas por Windows o el navegador no pueden reemplazarse desde esta página.
+- Cada proyecto tiene una captura local que se puede ampliar con clic y cerrar con Esc. adaptIA y Estudio el Oso muestran sus páginas públicas; Chappie muestra su interfaz original sin iniciar los servicios de voz o IA.
+
+La tecla Windows no es necesaria para explorar el sitio: todas las funciones tienen controles visibles o alternativas de teclado. «Suspender», «Reiniciar» y «Apagar» solo afectan este escritorio web.
+
 ## Ejecutar
 
 Requiere Python 3 para el servidor local. No necesita instalar paquetes.
@@ -15,6 +28,8 @@ python server.py
 ```
 
 Abrí **http://localhost:3000**. También podés usar `python -m http.server 3000` desde esta carpeta. Es necesario servirlo por HTTP: abrir `index.html` con doble clic no carga los módulos ES en todos los navegadores.
+
+Si el puerto está ocupado, usá `python server.py --port 8188` y abrí **http://127.0.0.1:8188**. El servidor de desarrollo escucha solo en el equipo local.
 
 ## El escritorio
 
@@ -40,14 +55,14 @@ El asistente ofrece respuestas predefinidas locales; no está conectado a un ser
 | `Ctrl / Cmd + K` | Buscar aplicaciones |
 | `Ctrl + Alt + D` | Mostrar / restaurar el escritorio |
 | `Ctrl + Alt + ← / →` | Acoplar la ventana activa |
-| `Ctrl + Alt + ↑` | Maximizar / restaurar |
-| `Ctrl + F6` | Cambiar entre ventanas visibles |
+| `Ctrl + Alt + ↑ / ↓` | Maximizar / restaurar o minimizar |
+| `Ctrl + F6` | Cambiar entre ventanas del escritorio |
 | `Esc` | Cerrar paneles |
 | `Enter / Espacio` | Abrir un acceso enfocado |
 | `↑ / ↓` en el escritorio | Mover el foco entre accesos |
 | `↑ / ↓` en la terminal | Recorrer el historial |
 
-Los atajos para ventanas no se interceptan mientras se escribe en un campo. Los paneles mantienen la navegación con Tab dentro de sus controles. Se respeta `prefers-reduced-motion` y se pueden desactivar las transiciones en Configuración.
+Los atajos globales funcionan también desde los campos; las operaciones habituales de edición y AltGr conservan su comportamiento nativo. La aplicación «Atajos de teclado» contiene la lista completa. Los paneles mantienen la navegación con Tab dentro de sus controles. Se respeta `prefers-reduced-motion` y se pueden desactivar las transiciones en Configuración.
 
 ## Organización
 
@@ -63,6 +78,13 @@ js/
   preferences.js             Tema, fondos, énfasis y movimiento
   icons.js                   SVG compartidos y arte vectorial de aplicaciones
   config.js                  Registro de aplicaciones y almacenamiento seguro
+  login.js, login-sequence.js Bloqueo, escritura automática y bienvenida
+  wallpapers.js              Galería y almacenamiento local de imagen propia
+  settings.js                Secciones de configuración y guía de atajos
+  shortcuts.js               Combinaciones de teclas y comandos de Ejecutar
+  desktop-state.js            Nombres, orden y papelera de accesos
+  system-apps.js              Administrador de tareas y ventanas del sistema
+  project-previews.js         Fotos de proyectos y visor ampliado accesible
 assets/                      Fondos Bloom, favicon y créditos
 terminal-easter-eggs.js       Easter eggs originales del proyecto
 Ivan_Pieretto_CV.pdf          CV original descargable
@@ -83,7 +105,7 @@ npm run check
 npm test
 ```
 
-Las cinco pruebas verifican el espacio reservado a la barra, el reparto de pantallas con ancho impar, los límites del arrastre y el ajuste a pantallas pequeñas. Las interacciones de navegador se revisaron manualmente con automatización de UI; no hay una suite E2E incluida. Los detalles de la revisión se encuentran en `VALIDATION.md`.
+Las 19 pruebas verifican geometría, acoplamiento, regreso de móvil a escritorio, temporizadores de inicio, omisión y cancelación de la animación, atajos, AltGr, comandos de Ejecutar, preferencias y conservación de ventanas entre escritorios virtuales. Las interacciones de navegador se revisaron manualmente con automatización de UI; no hay una suite E2E incluida. Los detalles de la revisión se encuentran en `VALIDATION.md`.
 
 ## Publicar
 
